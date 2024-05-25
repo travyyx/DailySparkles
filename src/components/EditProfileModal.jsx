@@ -30,7 +30,7 @@ export function EditModal({onClose}) {
         setEditing(false)
         const base64 = await fetch(window.sessionStorage.getItem("data"));
         const blob = await base64.blob();
-        setName(blob)
+        await upload(blob)
 
     }
 
@@ -40,7 +40,7 @@ export function EditModal({onClose}) {
         const auth = getAuth(app)
         const user = auth.currentUser
         const userRef = doc(db, "users", user.uid);
-        await upload(name, data.name)
+        console.log(downloadUrl)
         await updateDoc(userRef, {
         bio: data.content,
         name: data.name,
@@ -48,7 +48,7 @@ export function EditModal({onClose}) {
         });
 
         updateProfile(auth.currentUser, {
-        displayName: data.name, photoURL: downloadUrl ? downloadUrl : user. photoURL
+        displayName: data.name, photoURL: downloadUrl ? downloadUrl : user.photoURL
 
         }).then(() => {
           onClose()
@@ -59,14 +59,15 @@ export function EditModal({onClose}) {
 
     }
 
-const upload = async(file, name) => {
+const upload = async(file) => {
     const auth = getAuth(app)
     const user = auth.currentUser
-    const storageRef = ref(storage, `profiles/${name}`);
+    const storageRef = ref(storage, `profiles/${user.displayName}`);
     uploadBytes(storageRef, file).then((snapshot) => {
         getDownloadURL(storageRef)
   .then((url) => {
     // Insert url into an <img> tag to "download"
+    console.log(url)
     setDownloadUrl(url)
     window.sessionStorage.clear()
   })
