@@ -18,7 +18,6 @@ export function EditModal({onClose}) {
     const [ editing, setEditing] = useState(false)
     const [downloadUrl, setDownloadUrl] = useState("")
     const [textContent, setTextContent] = useState("")
-    const [name, setName] = useState(null)
     const auth = getAuth()
 
     const onChange = (cropper) => {
@@ -40,7 +39,6 @@ export function EditModal({onClose}) {
         const auth = getAuth(app)
         const user = auth.currentUser
         const userRef = doc(db, "users", user.uid);
-        console.log(downloadUrl)
         await updateDoc(userRef, {
         bio: data.content,
         name: data.name,
@@ -67,7 +65,6 @@ const upload = async(file) => {
         getDownloadURL(storageRef)
   .then((url) => {
     // Insert url into an <img> tag to "download"
-    console.log(url)
     setDownloadUrl(url)
     window.sessionStorage.clear()
   })
