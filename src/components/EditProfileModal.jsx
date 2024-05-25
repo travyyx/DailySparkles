@@ -42,7 +42,7 @@ export function EditModal({onClose}) {
         await updateDoc(userRef, {
         bio: data.content,
         name: data.name,
-        photoURL: downloadUrl
+        photoURL: downloadUrl ? downloadUrl : user.photoURL
         });
 
         updateProfile(auth.currentUser, {
