@@ -18,6 +18,7 @@ export function EditModal({onClose}) {
     const [ editing, setEditing] = useState(false)
     const [downloadUrl, setDownloadUrl] = useState("")
     const [textContent, setTextContent] = useState("")
+    const [name, setName] = useState(null)
     const auth = getAuth()
 
     const onChange = (cropper) => {
@@ -29,9 +30,7 @@ export function EditModal({onClose}) {
         setEditing(false)
         const base64 = await fetch(window.sessionStorage.getItem("data"));
         const blob = await base64.blob();
-        upload(blob)
-
-        
+        setName(blob)
 
     }
 
@@ -41,7 +40,7 @@ export function EditModal({onClose}) {
         const auth = getAuth(app)
         const user = auth.currentUser
         const userRef = doc(db, "users", user.uid);
-
+        await upload(name, data.name)
         await updateDoc(userRef, {
         bio: data.content,
         name: data.name,
@@ -60,10 +59,10 @@ export function EditModal({onClose}) {
 
     }
 
-const upload = async(file) => {
+const upload = async(file, name) => {
     const auth = getAuth(app)
     const user = auth.currentUser
-    const storageRef = ref(storage, `profiles/${user.displayName}`);
+    const storageRef = ref(storage, `profiles/${name}`);
     uploadBytes(storageRef, file).then((snapshot) => {
         getDownloadURL(storageRef)
   .then((url) => {
