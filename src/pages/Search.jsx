@@ -125,7 +125,7 @@ function SearchPage() {
         <h1 className="text-xl text-blue-500 hover:text-blue-700 transition-colors duration-200 cursor-pointer" onClick={clearAllRecents}>Clear All</h1>
         </div>
         <hr className="border-neutral-500/30"/>
-        <ul className="w-full flex items-center mt-4">
+        <ul className="w-full flex items-center mt-4 flex-col h-96 overflow-auto [&::-webkit-scrollbar]:w-0">
           {recentSearch.map((item) => (
           <RecentItem key={item} content={item} open={() => searchFromRecents(item)}/>
           ))}
@@ -135,7 +135,7 @@ function SearchPage() {
       <div className="w-full h-full flex flex-col items-center">
         {FindedUsers && FindedUsers.length != 0  && <h1 className="text-2xl mt-5">Results: {FindedUsers ? FindedUsers.length : "0"}</h1>}
         { FindedUsers.length === 0 ? (<h1 className="text-3xl mt-5">No results.</h1>) :  
-        <ul className="w-full md:w-[600px]">
+        <ul className="w-full md:w-[600px] h-[600px] overflow-auto p-2 [&::-webkit-scrollbar]:w-0">
             {FindedUsers && (
               FindedUsers.map((user) => {
                 return (

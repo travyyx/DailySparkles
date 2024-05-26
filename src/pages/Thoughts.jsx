@@ -174,7 +174,7 @@ function ThoughtsPage() {
                 {!open && <h1 className='mt-8 mb-3 text-2xl'>Your Thoughts.</h1>}
                 { !open && thoughts.length === 0 && <h1>You don&apos;t have any thoughts.</h1>}
         { thoughts.length === 0 || open ? (<></>) :  
-        <ul className="w-[30rem] md:w-[600px] h-[500px] overflow-auto">
+        <ul className="w-[30rem] md:w-[600px] h-[500px] overflow-auto [&::-webkit-scrollbar]:w-0">
             {thoughts && (
               thoughts.map((thought) => {
                 return (
