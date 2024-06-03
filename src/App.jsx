@@ -32,14 +32,14 @@ function App() {
     const provider = new GoogleAuthProvider()
     try {
       await signInWithPopup(auth, provider)
-      AddUser()
+      CreateUser()
       navigate("/home")
     } catch (error) {
-alert("An error occured.")
+alert("An error occured: " + error.message)
     }
   }
 
-  const AddUser = async() => {
+  const CreateUser = async() => {
     try {
       const auth = getAuth(app)
       const user = auth.currentUser
@@ -51,10 +51,17 @@ alert("An error occured.")
         createdAt: serverTimestamp(),
         recentSearch: [],
         bio: "",
-        liked: []
+        liked: [],
+        followers: [],
+        following: [],
+        comments: [],
+        thoughts: [],
+        dailyThoughts: 3,
+        lastPostingDate: null
+
       })
     } catch (error) {
-      alert("An error occured.")
+      alert("An error occured. Please Try again.")
     }
   }
 
@@ -63,11 +70,11 @@ alert("An error occured.")
   return (
       <main className="bg-black flex flex-col h-screen w-screen">
         <div className=' flex flex-col h-screen w-screen text-white gap-2 items-center justify-center'>
-        <h1 className="text-3xl font-semibold text-center">Welcome to Thoughtgram.</h1>
-        <h1 className='w-96 text-center text-lg text-neutral-500 mt-3'>A place where you can share your thoughts with your friends.</h1>
+        <h1 className="text-3xl font-semibold text-center">Welcome to DailySparkles.</h1>
+        <h1 className='w-96 text-center text-lg text-neutral-500 mt-3'>A place where you can share some of your sparkles every day with everyone.</h1>
         <button className="text-xl bg-white text-black p-3 rounded-full mt-6 hover:bg-neutral-100 transition-colors duration-200 w-64" onClick={signInWithGoogle} title='Sign in.'>Sign in with Google.</button>
         </div>
-        <footer className='text-white flex items-center justify-center mb-4 hover:text-sky-500 transition-colors duration-200 cursor-pointer' onClick={() => window.location.href = "https://github.com/octojack5"} title='Github profile.'>Made with Love by Ayomide.</footer>
+        <footer className='text-white flex items-center justify-center mb-4 hover:text-blue-500 transition-colors duration-200 cursor-pointer' onClick={() => window.location.href = "https://github.com/octojack5"} title='Github profile.'>Made with Love by Ayomide.</footer>
       </main>
   )
 }

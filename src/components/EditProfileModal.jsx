@@ -7,7 +7,6 @@ import { getAuth, updateProfile } from 'firebase/auth';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { ImageRestriction, FixedCropper } from 'react-advanced-cropper';
 import { onSnapshot, query, where, collection, doc, updateDoc } from 'firebase/firestore';
-import { AlertItem } from '../components/PostingModal'
 import 'react-advanced-cropper/dist/style.css'
 
 // Import the editor styles
@@ -39,6 +38,11 @@ export function EditModal({onClose}) {
         const auth = getAuth(app)
         const user = auth.currentUser
         const userRef = doc(db, "users", user.uid);
+        const base64 = await fetch(window.sessionStorage.getItem("data"));
+        const blob = await base64.blob();
+        if (window.sessionStorage.getItem("data")) {
+          await upload(blob)
+        }
         await updateDoc(userRef, {
         bio: data.content,
         name: data.name,
@@ -49,6 +53,7 @@ export function EditModal({onClose}) {
         displayName: data.name, photoURL: downloadUrl ? downloadUrl : user.photoURL
 
         }).then(() => {
+          window.sessionStorage.clear()
           onClose()
 
         }).catch((error) => {
@@ -60,13 +65,20 @@ export function EditModal({onClose}) {
 const upload = async(file) => {
     const auth = getAuth(app)
     const user = auth.currentUser
-    const storageRef = ref(storage, `profiles/${user.displayName}`);
+    const storageRef = ref(storage, `profiles/${watch("name")}`);
     uploadBytes(storageRef, file).then((snapshot) => {
         getDownloadURL(storageRef)
   .then((url) => {
-    // Insert url into an <img> tag to "download"
-    setDownloadUrl(url)
-    window.sessionStorage.clear()
+    if (watch("name") === user.displayName) {
+      setDownloadUrl(url)
+    } else {
+      const oldPicRef = ref(storage, `profiles/${user.displayName}`);
+      deleteObject(oldPicRef).then(() => {
+          setDownloadUrl(url)
+  
+        }).catch((error) => {
+        });
+    }
   })
 
       });
@@ -167,6 +179,7 @@ const upload = async(file) => {
                 </form>
             </div>
             </div> :<div className='w-full flex flex-col items-center justify-center'>
+              <h1 className='text-3xl mb-5'>Edit Media.</h1>
             <FixedCropper
             id="cropper"
             src={URL.createObjectURL(fileobj[0])}
