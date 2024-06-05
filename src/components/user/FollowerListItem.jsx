@@ -90,7 +90,7 @@ function FollowerListItem({id}) {
         }
 
     return (
-        <div className="w-full bg-neutral-950 flex gap-2 p-2 items-center mt-4 rounded-md">
+        <div className="w-full border-neutral-900 flex gap-2 p-2 items-center mt-4 rounded-md border-2">
             <div className="w-full flex items-center gap-2">
             <img src={follower && follower.photoURL} alt="follower picture" className="rounded-full w-8 h-8" />
             <h1 className="text-xl ml-1 cursor-pointer hover:underline" onClick={MoveToUser}>{follower && follower.name}</h1>

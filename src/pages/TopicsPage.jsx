@@ -43,12 +43,10 @@ function TopicPage() {
               docs.forEach((doc) => {
                   findedList.push(doc.data())
                   setSparkles(findedList)
-                  setLoading(false)
                 })
-            
           })
-  
         })
+        setLoading(false)
       } catch {
         setError(true)
       }
@@ -64,19 +62,19 @@ function TopicPage() {
     useEffect(() => {
         getTopicSparkles()
         getTopicData()
-    }, [params])
+    }, [])
     return (
         <main className="bg-black flex flex-col h-screen w-screen text-white gap-2 items-center justify-center">
         { !loading ? (<><header className='w-full flex p-2 items-center gap-2 mt-2'>
             <Home className="size-8 ml-4 cursor-pointer hover:text-blue-500 transition-colors duration-200 md:size-9" onClick={() => navigate("/home")}/>
             <div className="w-full items-center justify-center flex gap-2">
-<img src={topic && topic.icon} alt="topic image" className="size-8 rounded-full"/>
-        <h1 className='text-2xl font-bold text-center'>{params.name}</h1>
+<img src={topic && topic.icon} alt="topic image" className="size-8 rounded-full md:size-10"/>
+        <h1 className='text-2xl font-bold text-center md:text-3xl'>{params.name}</h1>
             </div>
             <UserIcon className="size-10 cursor-pointer hover:text-blue-500 transition-colors duration-200 md:size-9" onClick={() => navigate("/profile")}/>
         </header>
-        <div className="w-full h-screen flex p-4 flex-col mt-5">
-            <ul className="w-full h-full flex flex-col gap-2 overflow-auto md:w-[800px] [&::-webkit-scrollbar]:w-0">
+        <div className="w-full h-screen flex p-4 flex-col mt-5 items-center justify-center">
+            <ul className="w-screen h-full p-4 flex flex-col gap-2 overflow-auto md:w-[800px] [&::-webkit-scrollbar]:w-0">
             { sparkles.length != 0 ? sparkles.map((sparkle) => {
                 return (
             <HomeThoughtItem key={sparkle.id} content={sparkle.content} title={sparkle.title} thought={sparkle} author={sparkle.author_id}/>

@@ -143,7 +143,7 @@ const upload = async(file) => {
 
     return (
         <div className="fixed inset-0 bg-black backdrop-blur-sm bg-opacity-30 flex flex-col items-center justify-center p-4 sm:p-0 text-white">
-            { !editing ? <div className="bg-neutral-900 m-4 p-4 rounded w-full md:w-[400px]">
+            { !editing ? <div className="border-neutral-900 m-4 p-4 rounded w-full md:w-[400px] border-2 bg-neutral-950">
             <div className='flex items-center justify-between mb-5'>
                 <h1 className="text-2xl font-bold">Edit Profile.</h1>
                 <X onClick={onClose} className=' cursor-pointer'/>
@@ -152,21 +152,21 @@ const upload = async(file) => {
             <div>
                 <form action="submit" className='gap-1 flex flex-col' onSubmit={handleSubmit(onSubmit)}>
                 <label htmlFor="name" className="w-full pb-1 text-lg">Display Name</label>
-                <input className="bg-neutral-950 rounded border-neutral-900 border outline-none caret-neutral-700 p-0.5 placeholder:text-neutral-300/30 px-2 w-full text-lg"
+                <input className="bg-neutral-950 rounded border-neutral-900 border-2 outline-none caret-neutral-700 p-0.5 placeholder:text-neutral-300/30 px-2 w-full text-lg"
                 type="text" 
                 id="name"
                 placeholder="Example User"
                 {...register("name", {required: true})}/>
                 {errors.name && <span className="flex items-start text-red-500 w-full mt-2">Invalid Display name.</span>}
                 <label htmlFor="name" className="w-full pb-1 text-lg mt-1">Description</label>
-                <textarea name="" id="content" className=" w-full bg-neutral-950 p-2 rounded text-white placeholder:text-neutral-500 caret-neutral-500 text-xl resize-none h-[150px]" placeholder='Hello.' {...register("content", {required: true, maxLength: 200})}></textarea>
+                <textarea name="" id="content" className=" w-full bg-neutral-950 p-2 rounded text-white placeholder:text-neutral-500 caret-neutral-500 text-xl resize-none h-[150px] border-2 border-neutral-900" placeholder='Hello.' {...register("content", {required: true, maxLength: 200})}></textarea>
                 <div className='flex items-center gap-3 mt-2'>
-                {textContent && (<><progress className={textContent && textContent.length > 190 ? 'w-full [&::-webkit-progress-bar]:bg-neutral-950 [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-value]:bg-red-500 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]:duration-200' : 'w-full [&::-webkit-progress-bar]:bg-neutral-950 [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-value]:bg-blue-500 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]:duration-200'} value={textContent.length} max={200}></progress>
+                {textContent && (<><progress className={textContent && textContent.length > 190 ? 'w-full [&::-webkit-progress-bar]:bg-neutral-900 [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-value]:bg-red-500 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]:duration-200' : 'w-full [&::-webkit-progress-bar]:bg-neutral-900 [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-value]:bg-blue-500 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]:duration-200 '} value={textContent.length} max={200}></progress>
                       <h1>{textContent ? textContent.length : "0"}/200</h1></>)}
                 </div>
                 <label htmlFor="username" className="w-full pb-1 text-lg mt-1 text-center">Profile Picture</label>
                 <div className='flex flex-col w-full items-center'>
-                <img src={user && !downloadUrl ? user.photoURL : downloadUrl} alt="profile picture" className='rounded-full mb-3 cursor-pointer' onClick={onFileClick}/>
+                <img src={user && !downloadUrl ? user.photoURL : downloadUrl} alt="profile picture" className='rounded-full mb-3 cursor-pointer border-neutral-800 border-2' onClick={onFileClick}/>
 
                 <input
                 type="file" 
@@ -175,7 +175,7 @@ const upload = async(file) => {
                 className='hidden'
                 {...register("filepath")}/>
                 </div>
-                <button type="submit" className="mt-2 bg-green-700 text-white text-md p-1 rounded hover:bg-green-900 transition-colors duration-200 focus:ring-green-600/50 focus:ring-1 outline-none w-full">Save Changes.</button>
+                <button type="submit" className="mt-2 bg-green-700 text-white text-md p-1 rounded hover:bg-green-900 transition-colors duration-200 focus:ring-green-600/50 focus:ring-1 outline-none w-full border-2 border-green-900">Save Changes.</button>
                 </form>
             </div>
             </div> :<div className='w-full flex flex-col items-center justify-center'>

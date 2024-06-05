@@ -145,7 +145,7 @@ setError(true)
 
     return (
         <main className="bg-black flex flex-col h-screen w-screen text-white gap-2 items-center justify-center">
-           { !loading ? (<><header className="w-screen flex items-center justify-between mt-3 p-2">
+           { !loading ? (<><header className="w-screen flex items-center justify-between p-2 md:p-6 ">
             <div className="w-full flex gap-0.5">
             <h1 className="text-2xl font-semibold ml-2 cursor-pointer md:text-3xl hover:text-blue-400 duration-200 peer hover:-translate-y-1 hover:scale-100 transition-all" onClick={() => window.location.reload()}>DailySparkles.</h1>
             <Sparkles className="size-5 peer-hover:text-yellow-500 duration-700 peer-hover:-translate-y-1 peer-hover:scale-100 transition-all md:size-6"/>
@@ -156,14 +156,14 @@ setError(true)
 
             </div>
            </header>
-           <div className="w-full flex items-center justify-center gap-3 mt-4 md:gap-14">
+           <div className="w-full flex items-center justify-center gap-3 mt-4 md:gap-10">
             <button className={viewType === 0 ? "text-xl transition-colors duration-300 md:text-2xl" : "text-xl transition-colors duration-300 md:text-2xl text-white/30"} onClick={() => setViewType(0)}>Home</button>
             <button className={viewType === 1 ? "text-xl transition-colors duration-300 md:text-2xl" : "text-xl transition-colors duration-300 md:text-2xl text-white/30"} onClick={() => setViewType(1)}>Following</button>
             <button className={viewType === 2 ? "text-xl transition-colors duration-300 md:text-2xl" : "text-xl transition-colors duration-300 md:text-2xl text-white/30"} onClick={() => setViewType(2)}>Topics</button>
             <button className={viewType === 3 ? "text-xl transition-colors duration-300 md:text-2xl" : "text-xl transition-colors duration-300 md:text-2xl text-white/30"} onClick={() => setViewType(3)}>Trending</button>
            </div>
            { viewType === 0 && (
-           <ul className="w-screen h-full p-4 flex flex-col gap-2 overflow-auto md:w-[800px] [&::-webkit-scrollbar]:w-0">
+           <ul className="w-screen h-full p-4 flex flex-col gap-2 overflow-auto md:w-[650px] [&::-webkit-scrollbar]:w-0">
             { thoughts.length != 0 ? thoughts.map((thought) => {
                 return (
             <HomeThoughtItem key={thought.id} content={thought.content} title={thought.title} thought={thought} author={thought.author_id}/>
@@ -198,7 +198,7 @@ setError(true)
             <ul className="w-screen h-full p-4 flex flex-col gap-2 overflow-auto md:w-[800px] [&::-webkit-scrollbar]:w-0">
               {topics.length != 0 ? topics.map((topic) => {
                 return (
-                  <TopicsItem key={topic.id} name={topic.name} description={topic.description} icon={topic.icon}/>
+                  <TopicsItem key={topic.name} name={topic.name} description={topic.description} icon={topic.icon}/>
                   )
                   }) : 
                     (

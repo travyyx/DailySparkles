@@ -14,7 +14,7 @@ function RecentItem({content, open}) {
     });
     }
     return (
-        <div className="w-full bg-neutral-900 flex gap-2 p-2 items-center md:rounded-md cursor-pointer rounded-lg justify-between hover:bg-neutral-950 transition-colors duration-200">
+        <div className="w-full border-neutral-900 border-2 flex gap-2 p-2 items-center md:rounded-md cursor-pointer rounded-lg justify-between hover:bg-neutral-950 transition-colors duration-200">
             <div className="flex items-center gap-2">
             <History className="text-neutral-500/30"/>
             <h1 className="text-lg truncate hover:underline" onClick={open}>{content}</h1>

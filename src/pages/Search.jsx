@@ -127,7 +127,7 @@ function SearchPage() {
       <ArrowLeft size={32} className='cursor-pointer hover:stroke-blue-500 transition-colors duration-200'  onClick={() => navigate("/home")}/>
         <form className="flex flex-col gap-2 w-full ml-2" onChange={handleSubmit(SearchUser)}>
             <div className="flex items-center justify-center gap-4 w-full">
-            <input type="text" id="searchData" placeholder="Search Something..." {...register("search")} className="bg-neutral-900 p-1 rounded text-white placeholder:text-neutral-500 caret-neutral-500 text-xl w-full"/>
+            <input type="text" id="searchData" placeholder="Search Something..." {...register("search")} className="border-neutral-900 border-2 bg-transparent p-1 rounded text-white placeholder:text-neutral-500 caret-neutral-500 text-xl w-full"/>
             { textContent && <X size={32} className='cursor-pointer hover:stroke-blue-500 transition-colors duration-200' onClick={() => setValue("search", "")}/>}
             </div>
         </form>

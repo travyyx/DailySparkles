@@ -230,7 +230,7 @@ setError(true)
             <hr className="border-neutral-500/30 w-full mt-4"/>
             <h1 className="w-full p-4 text-3xl text-center">Comments.</h1>
             { thought && thought[0].comments.length === 0 ? (
-                              <div className='w-full flex items-center justify-center bg-neutral-950 rounded-md mt-4 h-full'>
+                              <div className='w-full flex items-center justify-center border-neutral-900 border-2 rounded-md mt-4 h-full mb-2'>
                               <h1 className='text-2xl text-neutral-600 text-center'>No comments yet.</h1>
                           </div>
             ) : (

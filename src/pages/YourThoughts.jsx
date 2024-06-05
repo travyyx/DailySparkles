@@ -55,7 +55,6 @@ function ThoughtsPage() {
                   ThoughtsList.push(doc.data());
               });
               GetUserThoughts(ThoughtsList)
-              setLoading(false)
           })
         } catch {
 setError(true)
@@ -68,6 +67,7 @@ setError(true)
         const NewFinded = list.filter((item) => item.author_id.toLowerCase() === user.uid.toLowerCase())
 
           setThoughts(NewFinded)
+          setLoading(false)
 
         }
 
@@ -240,7 +240,6 @@ setError(true)
       const docSnap = await getDoc(docRef)
       if (docSnap.data().dailyThoughts) {
         setDailyThoughts(docSnap.data().dailyThoughts)
-        console.log(dailyThoughts)
     }
   }
 
@@ -273,10 +272,10 @@ setError(true)
                   <h1 className='mb-4 text-2xl mt-4 md:text-3xl'>Say what do you think.</h1>
                 <form className='flex flex-col justify-center items-center gap-3 mt-4' onSubmit={handleSubmit(PostThought)}>
                 <label htmlFor="title" className="text-xl w-full">Sparkle Title.</label>
-                <input type="text" id="title" placeholder="My thought." {...register("title", {required: true})} className="bg-neutral-900 p-1 rounded text-white placeholder:text-neutral-500 caret-neutral-500 text-xl w-full"/>
+                <input type="text" id="title" placeholder="My thought." {...register("title", {required: true})} className="border-neutral-900 p-1 rounded text-white placeholder:text-neutral-500 caret-neutral-500 text-xl w-full bg-transparent border-2"/>
                 { errors.title?.type === "required" ? <h1 className='w-full text-red-500'>This field is required.</h1> : <></>}
                 <label htmlFor="content" className="text-xl w-full">Sparkle Content.</label>
-                    <textarea name="" id="content" className="bg-neutral-900 p-2 rounded text-white placeholder:text-neutral-500 caret-neutral-500 text-xl resize-none w-[400px] h-[200px] [&::-webkit-scrollbar]:w-0" placeholder='Hello.' {...register("content", {required: true, maxLength: 200})}></textarea>
+                    <textarea name="" id="content" className="border-neutral-900 p-2 rounded text-white placeholder:text-neutral-500 caret-neutral-500 text-xl resize-none w-[400px] h-[200px] [&::-webkit-scrollbar]:w-0 border-2 bg-transparent" placeholder='Hello.' {...register("content", {required: true, maxLength: 200})}></textarea>
                     <div className='flex w-full items-center justify-center gap-2'>
                     {textContent && (<><progress className={textContent && textContent.length > 190 ? 'w-full [&::-webkit-progress-bar]:bg-neutral-900 [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-value]:bg-red-500 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]:duration-200' : 'w-full [&::-webkit-progress-bar]:bg-neutral-900 [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-value]:bg-blue-500 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]:duration-200'} value={textContent.length} max={200}></progress>
                       <h1>{textContent ? textContent.length : "0"}/200</h1></>)}
@@ -284,14 +283,14 @@ setError(true)
                     { errors.content?.type === "maxLength" ? <h1 className='w-full text-red-500'>You reached the character limit.</h1> : <></>}
                     <label htmlFor="topicsChoose" className="text-xl w-full">Sparkle Topic.</label>
                     { topics && (
-                      <select name="topicsChoose" className='w-full bg-neutral-900 p-2 rounded-lg *:bg-neutral-950' {...register("topic")}>
+                      <select name="topicsChoose" className='w-full border-neutral-900 p-2 rounded-lg *:bg-neutral-950 bg-transparent border-2' {...register("topic")}>
                         <option value="general" selected>General</option>
                         { topics.map((topic) => {
                           return (<option value={topic.name} key={topic.name}>{topic.name}</option>)
                         })}
                       </select>
                     )}
-                    { dailyThoughts != 0 &&<button className="text-xl bg-white text-black p-2 rounded-full mt-6 hover:bg-neutral-100 transition-colors duration-200 w-32" type='submit'>Post.</button>}
+                    { dailyThoughts != 0 &&<button className="text-xl bg-white text-black p-2 rounded-full mt-6 hover:bg-neutral-100 transition-colors duration-200 w-32 border-2 border-neutral-500" type='submit'>Post.</button>}
                     { dailyThoughts != 0 ? <h1 className='mb-4 text-2xl mt-4 md:text-3xl'>{dailyThoughts && dailyThoughts} Sparkles Left for the day.</h1> : <h1 className='mb-4 text-xl mt-4 md:text-2xl text-red-600 text-center w-96'>Daily posting limit reached. Go back tomorrow to be able to post.</h1>}
                 </form>
                   </>

@@ -90,14 +90,14 @@ function FollowingListItem({id}) {
         }
 
     return (
-        <div className="w-full bg-neutral-950 flex gap-2 p-2 items-center mt-4 rounded-md">
+        <div className="w-full border-neutral-900 border-2 flex gap-2 p-2 items-center mt-4 rounded-md">
             <div className="w-full flex items-center gap-2">
             <img src={following && following.photoURL} alt="follower picture" className="rounded-full w-8 h-8" />
             <h1 className="text-xl ml-1 cursor-pointer hover:underline" onClick={MoveToUser}>{following && following.name}</h1>
             </div>
             { user && id != user.uid && (
-              ( !isFollowing ? (<button className="bg-blue-500 px-2 py-1 mr-2 rounded-sm hover:bg-blue-700 transition-colors duration-200 text-sm" onClick={FollowUser}>Follow</button>) :(
-                <button className=" bg-red-600 px-2 py-1 mr-2 rounded-sm hover:bg-red-700 transition-colors duration-200 text-sm" onClick={FollowUser}>Unfollow</button>
+              ( !isFollowing ? (<button className="bg-blue-500 px-2 py-1 mr-2 rounded-sm hover:bg-blue-700 transition-colors duration-200 text-sm border-2 border-blue-900" onClick={FollowUser}>Follow</button>) :(
+                <button className=" bg-red-600 px-2 py-1 mr-2 rounded-sm hover:bg-red-700 transition-colors duration-200 text-sm border-2 border-red-900" onClick={FollowUser}>Unfollow</button>
             ))
             )}
         </div>

@@ -55,14 +55,14 @@ function FollowersList({onClose, id}) {
 
     return (
         <div className="fixed inset-0 bg-black backdrop-blur-sm bg-opacity-30 flex flex-col items-center justify-center p-4 sm:p-0 text-white">
-        <div className="bg-neutral-900 m-4 p-4 rounded w-full md:w-[500px]">
+        <div className="bg-neutral-950 m-4 p-4 rounded w-full md:w-[500px] border-2 border-neutral-900">
             <div className='flex w-full items-center justify-between'>
                 <h1 className='text-2xl'>Followers.</h1>
                 <X className='cursor-pointer' onClick={onClose}/>
             </div>
             <form onChange={handleSubmit(handleSearch)} className='flex w-full mt-4'>
 
-                <input type="text" id="searchData" placeholder="Search..." {...register("search")} className="bg-neutral-950 p-1 rounded text-white placeholder:text-neutral-500 caret-neutral-500 text-xl w-full"/>
+                <input type="text" id="searchData" placeholder="Search..." {...register("search")} className="border-neutral-900 p-1 rounded text-white placeholder:text-neutral-500 caret-neutral-500 text-xl w-full bg-transparent border-2"/>
             </form>
             { followers.length != 0 ? (
                 <div className='w-full flex flex-col'>
