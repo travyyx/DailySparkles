@@ -21,7 +21,7 @@ const initialState = {
     }
   };
 
-function HomeThoughtItem({thought, content, title, author}) {
+function CommentItem({comment, content, author}) {
 
     const [state, dispatch] = useReducer(reducer, initialState);
     const [ liked, setLiked ] = useState(null)
@@ -30,12 +30,12 @@ function HomeThoughtItem({thought, content, title, author}) {
     const navigate = useNavigate()
 
     useEffect(() => {
-      if (thought?.createdAt) {
-        const createdAtDate = thought.createdAt.toDate();
+      if (comment?.creationDate) {
+        const createdAtDate = comment.creationDate.toDate();
         const postDate = formatDistanceToNow(createdAtDate, { includeSeconds: true, addSuffix: true });
         dispatch({ type: 'SET_POST_DATE', postDate });
       }
-    }, [thought?.createdAt]);
+    }, [comment?.creationDate]);
 
     const getUserLikes = async() => {
       const auth = getAuth(app)
@@ -45,7 +45,7 @@ function HomeThoughtItem({thought, content, title, author}) {
 
       const unsub = await onSnapshot(q, (querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          if (doc.data().liked.includes(thought.id)) {
+          if (doc.data().liked.includes(comment.id)) {
               setLiked(true)
           }
           else {
@@ -78,13 +78,13 @@ function HomeThoughtItem({thought, content, title, author}) {
       getAuthorData()
     }, [])
 
-    const LikeThought = async() => {
+    const LikeComment = async() => {
       const auth = getAuth(app)
       const userdata = auth.currentUser
       if (!liked) {
-          const thoughtRef = doc(db, "thoughts", title + userdata.uid);
+          const commentRef = doc(db, "comment", content + userdata.uid);
 
-          await updateDoc(thoughtRef, {
+          await updateDoc(commentRef, {
           likes: increment(1)
           });
           getUserLikes()
@@ -92,16 +92,16 @@ function HomeThoughtItem({thought, content, title, author}) {
           const userRef = doc(db, "users", userdata.uid);
 
           await updateDoc(userRef, {
-              liked: arrayUnion(thought.id)
+              liked: arrayUnion(comment.id)
           });
 
 
       }
 
       else {
-          const thoughtRef = doc(db, "thoughts", title + userdata.uid);
+          const commentRef = doc(db, "thoughts", comment + userdata.uid);
 
-          await updateDoc(thoughtRef, {
+          await updateDoc(commentRef, {
               likes: increment(-1)
             });
             getUserLikes()
@@ -109,7 +109,7 @@ function HomeThoughtItem({thought, content, title, author}) {
           const userRef = doc(db, "users", userdata.uid);
           
           await updateDoc(userRef, {
-              liked: arrayRemove(thought.id)
+              liked: arrayRemove(comment.id)
           });
       }
   }
@@ -118,7 +118,7 @@ function HomeThoughtItem({thought, content, title, author}) {
   useEffect(() => {
     const auth = getAuth(app)
     const user = auth.currentUser
-    const unsub = onSnapshot(doc(db, "thoughts", thought.title + user.uid), (doc) => {
+    const unsub = onSnapshot(doc(db, "thoughts", content + user.uid), (doc) => {
       setLikes(doc.data().likes)
   });
   return () => unsub();
@@ -136,29 +136,25 @@ function HomeThoughtItem({thought, content, title, author}) {
 
     
   }
-    function MoveToSparkle() {
-      navigate(`/sparkle/${thought.id}`)
-    }
     return (
         <div className="w-full border-neutral-900 border-2 flex justify-between items-center gap-3 p-4 md:rounded-md cursor-pointer md:mt-4 mt-2 hover:bg-neutral-950 transition-colors duration-200 px-4 rounded flex-col">
             <div className="w-full flex items-center gap-2 justify-between">
                 <div className="flex gap-2 items-center">
-                {authorData ? (<img src={authorData && authorData.photoURL} alt="profile" className="rounded-full w-[42px] cursor-pointer"/>) : (<div className="w-[42px] rounded-full bg-neutral-600"></div>)}
+                <img src={authorData && authorData.photoURL} alt="profile" className="rounded-full w-[42px] cursor-pointer"/>
                 <h1 className="text-lg hover:underline" onClick={MoveToUser}>{author && authorData.name}</h1>
                 </div>
                 <h1 className="text-neutral-600">{state.postDate}</h1>
             </div>
             <hr className="w-full border-neutral-800"/>
             <div className="flex flex-col gap-2 text-wrap truncate w-full">
-            <h1 className="text-xl truncate">{title}</h1>
-            <h1 className="text-md hover:underline"  onClick={MoveToSparkle}>{content}</h1>
+            <h1 className="text-md hover:underline"  >{content}</h1>
             </div>
             <div className="w-full flex gap-2 items-center justify-end">
-            <Heart className={ liked ? "cursor-pointer md:size-7 text-red-700" : "cursor-pointer md:size-7 transition-all"} fill={liked ? "#b91c1c" : "#ffffff"} onClick={LikeThought}/>
+            <Heart className={ liked ? "cursor-pointer md:size-7 text-red-700" : "cursor-pointer md:size-7 transition-all"} fill={liked ? "#b91c1c" : "#ffffff"} onClick={LikeComment}/>
             <h1 className="text-lg md:text-xl">{likes && likes}</h1>
             </div>
         </div>
     )
 }
 
-export default HomeThoughtItem;
+export default CommentItem;

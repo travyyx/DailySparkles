@@ -50,9 +50,7 @@ function HomePage() {
       }, [loading]);
 
       const getFollowingThoughts = async() => {
-        const auth = getAuth(app)
-        const userdata = auth.currentUser
-        const docRef = doc(db, "users", userdata.uid);
+        const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
         const followingList = docSnap.data().following
         followingList.map((following) => {
@@ -63,6 +61,7 @@ function HomePage() {
               doc.data().thoughts.map((thought) => {
                 thoughtsList.push(thought)
               })
+
               const ThoughtsList = []
               thoughtsList.map((thought) => {
                 const q = query(collection(db, "thoughts"), where("id", "==", thought))
@@ -70,8 +69,8 @@ function HomePage() {
                   docs.forEach((doc) => {
                     ThoughtsList.push(doc.data())
                     })
-                  setFollowingThoughts(ThoughtsList.sort((a, b) => b.createdAt - a.createdAt))
-                  setLoading(false)
+                    setFollowingThoughts(ThoughtsList.sort((a, b) => b.createdAt - a.createdAt))
+                    setLoading(false)
               })
             })
           })
@@ -83,9 +82,20 @@ function HomePage() {
     }
 
       useEffect(() => {
-        getFollowingThoughts()
-        getTopics()
+        if (user) {
+          getFollowingThoughts()
+          getTopics()
+        }
       }, [loading])
+
+
+      useEffect(() => {
+        if (navigator.onLine) {
+          return
+        } else {
+          setError(true)
+        }
+      }, [])
 
       useEffect(() => {
         const q = query(collection(db, "thoughts"));
@@ -144,7 +154,7 @@ setError(true)
 
 
     return (
-        <main className="bg-black flex flex-col h-screen w-screen text-white gap-2 items-center justify-center">
+        <main className="bg-black flex flex-col h-screen w-screen text-white gap-2 items-center justify-center border-x-2 border-neutral-900">
            { !loading ? (<><header className="w-screen flex items-center justify-between p-2 md:p-6 ">
             <div className="w-full flex gap-0.5">
             <h1 className="text-2xl font-semibold ml-2 cursor-pointer md:text-3xl hover:text-blue-400 duration-200 peer hover:-translate-y-1 hover:scale-100 transition-all" onClick={() => window.location.reload()}>DailySparkles.</h1>
@@ -152,11 +162,11 @@ setError(true)
             </div>
             <div className="flex gap-7 items-center">
             <Search className="size-14 cursor-pointer hover:text-blue-500 transition-colors duration-200 md:size-9" onClick={() => navigate("/search")}/>
-            <img src={user && user.photoURL} alt="profile" className="rounded-full w-[42px] cursor-pointer mr-1 md:size-11 hover:-translate-y-1 hover:scale-105 transition-all duration-200" onClick={() => navigate("/profile")}/>
+            {user ? (<img src={user && user.photoURL} alt="profile" className="rounded-full w-[42px] cursor-pointer mr-1 md:size-11 hover:-translate-y-1 hover:scale-105 transition-all duration-200" onClick={() => navigate("/profile")}/>) : (<div className=" bg-neutral-500 w-[42px]"></div>)}
 
             </div>
            </header>
-           <div className="w-full flex items-center justify-center gap-3 mt-4 md:gap-10">
+           <div className="w-full flex items-center justify-center gap-3 mt-4 md:gap-10 border-b-2 pb-4 border-neutral-900 lg:border-none">
             <button className={viewType === 0 ? "text-xl transition-colors duration-300 md:text-2xl" : "text-xl transition-colors duration-300 md:text-2xl text-white/30"} onClick={() => setViewType(0)}>Home</button>
             <button className={viewType === 1 ? "text-xl transition-colors duration-300 md:text-2xl" : "text-xl transition-colors duration-300 md:text-2xl text-white/30"} onClick={() => setViewType(1)}>Following</button>
             <button className={viewType === 2 ? "text-xl transition-colors duration-300 md:text-2xl" : "text-xl transition-colors duration-300 md:text-2xl text-white/30"} onClick={() => setViewType(2)}>Topics</button>

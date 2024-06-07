@@ -65,20 +65,13 @@ export function EditModal({onClose}) {
 const upload = async(file) => {
     const auth = getAuth(app)
     const user = auth.currentUser
-    const storageRef = ref(storage, `profiles/${watch("name")}`);
+    const storageRef = ref(storage, `profiles/${user.uid}`);
     uploadBytes(storageRef, file).then((snapshot) => {
         getDownloadURL(storageRef)
   .then((url) => {
-    if (watch("name") === user.displayName) {
       setDownloadUrl(url)
-    } else {
-      const oldPicRef = ref(storage, `profiles/${user.displayName}`);
-      deleteObject(oldPicRef).then(() => {
-          setDownloadUrl(url)
-  
-        }).catch((error) => {
-        });
-    }
+
+
   })
 
       });

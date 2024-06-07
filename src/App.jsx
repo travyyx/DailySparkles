@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getAuth, signInWithPopup, GoogleAuthProvider, setPersistence, browserLocalPersistence } from 'firebase/auth'
 import  { app, db } from './config'
-import { setDoc, collection, doc, serverTimestamp } from 'firebase/firestore'
+import { setDoc, collection, doc, serverTimestamp, getDoc } from 'firebase/firestore'
 
 
 function App() {
@@ -43,23 +43,30 @@ alert("An error occured: " + error.message)
     try {
       const auth = getAuth(app)
       const user = auth.currentUser
-      const docRef = await setDoc(doc(db, "users", user.uid), {
-        name: user.displayName,
-        email: user.email,
-        photoURL: user.photoURL,
-        id: user.uid,
-        createdAt: serverTimestamp(),
-        recentSearch: [],
-        bio: "",
-        liked: [],
-        followers: [],
-        following: [],
-        comments: [],
-        thoughts: [],
-        dailyThoughts: 3,
-        lastPostingDate: null
+      const userDoc = doc(db, "users", user.uid)
+      const docSnap = await getDoc(userDoc)
+      if (docSnap.exists()) {
+        return
+      } else {
 
-      })
+        const docRef = await setDoc(doc(db, "users", user.uid), {
+          name: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+          id: user.uid,
+          createdAt: serverTimestamp(),
+          recentSearch: [],
+          bio: "",
+          liked: [],
+          followers: [],
+          following: [],
+          comments: [],
+          thoughts: [],
+          dailyThoughts: 3,
+          lastPostingDate: null
+  
+        })
+      }
     } catch (error) {
       alert("An error occured. Please Try again.")
     }
