@@ -255,7 +255,7 @@ setError(true)
             </>
             )}      
             { alertType === "copied" && <AlertItem content={"Link copied."} type={"success"}/>}
-            { comment && <CommentModal onClose={() => setComment(false)} type={"reply"}/>}
+            { comment && <CommentModal onClose={() => setComment(false)} type={"comment"}/>}
         </main>
     )
 }
