@@ -114,6 +114,17 @@ function HomeThoughtItem({thought, content, title, author}) {
       }
   }
 
+  function formatNumber(count) {
+    if (count < 1000) {
+      return count.toString();
+    } else if (count < 1000000) {
+      return (count / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+    } else if (count < 1000000000) {
+      return (count / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+    } else {
+      return (count / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
+    }
+  }
 
   useEffect(() => {
     const auth = getAuth(app)
@@ -155,7 +166,7 @@ function HomeThoughtItem({thought, content, title, author}) {
             </div>
             <div className="w-full flex gap-2 items-center justify-end">
             <Heart className={ liked ? "cursor-pointer md:size-7 text-red-700" : "cursor-pointer md:size-7 transition-all"} fill={liked ? "#b91c1c" : "#ffffff"} onClick={LikeThought}/>
-            <h1 className="text-lg md:text-xl">{likes && likes}</h1>
+            <h1 className="text-lg md:text-xl">{likes && formatNumber(likes)}</h1>
             </div>
         </div>
     )

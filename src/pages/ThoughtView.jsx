@@ -220,6 +220,17 @@ function UserThought() {
             }
         }
 
+        function formatNumber(count) {
+          if (count < 1000) {
+            return count.toString();
+          } else if (count < 1000000) {
+            return (count / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+          } else if (count < 1000000000) {
+            return (count / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+          } else {
+            return (count / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
+          }
+        }
         
 
     return (
@@ -242,11 +253,11 @@ function UserThought() {
             <div className="w-full flex mt-4">
                 <div className="w-full flex gap-2 items-center">
             <Heart className={ liked ? "cursor-pointer md:size-7 text-red-700" : "cursor-pointer md:size-7"} fill={liked  ? "#b91c1c" : undefined} onClick={LikeThought}/>
-            <h1 className="text-lg md:text-xl">{thought && thought[0].likes}</h1>
+            <h1 className="text-lg md:text-xl">{thought && formatNumber(thought[0].likes)}</h1>
             <Eye className="ml-4"/>
-            <h1 className="text-lg md:text-xl">{thought && thought[0].views}</h1>
+            <h1 className="text-lg md:text-xl">{thought && formatNumber(thought[0].views)}</h1>
             <MessageSquare className="ml-4 cursor-pointer hover:text-green-500 transition-colors duration-200" onClick={() => setComment(true)}/>
-            <h1 className="text-lg md:text-xl">{comments && comments.length}</h1>
+            <h1 className="text-lg md:text-xl">{comments && formatNumber(comments.length)}</h1>
                 </div>
                 <button className="w-auto bg-neutral-900 rounded-full p-2 hover:text-green-500 transition-all duration-200"  onClick={copyLink}><Share/></button>
             </div>
@@ -257,7 +268,7 @@ function UserThought() {
                               <h1 className='text-2xl text-neutral-600 text-center'>No comments yet.</h1>
                           </div>
             ) : (
-              <ul className="w-full h-full">
+              <ul className="w-full h-[443px] gap-3 flex flex-col overflow-auto [&::-webkit-scrollbar]:w-0">
                 { comments.map((comment) => {
                 return (<CommentItem key={comment} commentId={comment}/>)
                 })}

@@ -157,6 +157,26 @@ const LikeThought = async() => {
   }
 }
 
+const SetCommentPinState = async() => {
+  const commentRef= doc(db, "comments", commentId)
+
+  await updateDoc(commentRef, {
+    isPinned: commentData && !commentData.isPinned
+  })
+  getCommentData()
+}
+
+function formatNumber(count) {
+  if (count < 1000) {
+    return count.toString();
+  } else if (count < 1000000) {
+    return (count / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+  } else if (count < 1000000000) {
+    return (count / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+  } else {
+    return (count / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
+  }
+}
 
   return (
     <div className='w-full h-auto border-neutral-800 border-2 p-4 hover:bg-neutral-950 transition-colors duration-200 rounded'>
@@ -171,29 +191,24 @@ const LikeThought = async() => {
       <div>
         <h1 className='text-xl my-4'>{commentData && commentData.content}</h1>
         <hr className='border-neutral-800'/>
-        <div className='flex items-center gap-5 p-2 justify-between'>
-          <h1 className='text-lg'>Replies.</h1>
+        <div className='flex items-center gap-5 p-2 justify-between mt-1'>
+            { commentData && commentData.replies.length != 0 ? (<h1 className='text-lg w-full text-blue-500 cursor-pointer hover:underline'>Show Replies ({formatNumber(commentData.replies.length)})</h1>) : (<h1 className='text-lg w-full text-blue-500/30 cursor-pointer hover:underline'>No Replies to show.</h1>)}
           <div className='w-full flex gap-5 items-center justify-end'>
           <div className='flex gap-2 items-center'>
           <Heart className={ liked ? "cursor-pointer md:size-7 text-red-700" : "cursor-pointer md:size-7 transition-all"} fill={liked ? "#b91c1c" : "#ffffff"} onClick={LikeThought}/>
-          <h1 className="text-lg md:text-xl">{likes && likes}</h1>
+          <h1 className="text-lg md:text-xl">{likes && formatNumber(likes)}</h1>
           </div>
           <div className='flex gap-2 items-center'>
             <MessageSquare/>
-            <h1 className="text-lg md:text-xl">{likes && likes}</h1>
+            <h1 className="text-lg md:text-xl">{commentData && formatNumber(commentData.replies.length)}</h1>
           { user && authorData && user.uid === authorData.id && (
             commentData && commentData.isPinned ? (
-              <PinOff className="hover:text-red-500 transition-colors duration-200 cursor-pointer"/>
-             ) : (<Pin className="hover:text-blue-500 transition-colors duration-200 cursor-pointer"/>)
+              <PinOff className="hover:text-red-500 transition-colors duration-200 cursor-pointer ml-2" onClick={SetCommentPinState}/>
+             ) : (<Pin className="hover:text-blue-500 transition-colors duration-200 cursor-pointer ml-2" onClick={SetCommentPinState}/>)
           )}
           </div>
           </div>
         </div>
-      </div>
-          <hr className='border-neutral-800'/>
-      <div></div>
-      <div>
-        <h1 className='text-lg w-full text-center mt-2 text-blue-500 cursor-pointer hover:underline'>Show More Replies (5)</h1>
       </div>
     </div>
   )
