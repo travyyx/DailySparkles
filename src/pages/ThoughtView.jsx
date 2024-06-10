@@ -46,6 +46,7 @@ function UserThought() {
       }, [auth, navigate]);
 
       useEffect(() => {
+        try {
         const q = query(collection(db, "thoughts"));
   
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -56,12 +57,15 @@ function UserThought() {
             GetUserThoughts(ThoughtsList)
             setLoading(false)
         })
-  
-        return () => unsubscribe()
+      
+            return () => unsubscribe()
+      } catch {
+        setError(true)
+        }
       }, []);
 
+
       const getUserLikes = async() => {
-        try {
 
           const auth = getAuth(app)
           const userdata = auth.currentUser
@@ -80,9 +84,7 @@ function UserThought() {
           })
           
           return () => unsub()
-        } catch {
-setError(true)
-        }
+
       }
 
       const getAuthorData = async(authorId) => {
@@ -102,7 +104,7 @@ setError(true)
 
       useEffect(() => {
         getUserLikes()
-      }, [liked])
+      })
 
 
       useEffect(() => {
@@ -119,6 +121,22 @@ setError(true)
         }
       }, [thought])
 
+      const getComments = async() => {
+        const q = query(collection(db, "thoughts"), where("id", "==", params.id))
+
+        const unsub = await onSnapshot(q, (snapshot) => {
+          snapshot.forEach((doc) => {
+            setComments(doc.data().comments)
+          })
+        })
+
+        return () => unsub()
+      }
+
+      useEffect(() => {
+        getComments()
+      }, [])
+
 
 
       const GetUserThoughts = async(list) => {
@@ -127,8 +145,9 @@ setError(true)
           setThought(NewFinded)
 
         }
+        
         const viewThought = async(name) => {
-          const docRef = doc(db, "thoughts", name + user.uid);
+          const docRef = doc(db, "thoughts", name);
       
           if (isViewed) {
             return
@@ -151,7 +170,7 @@ setError(true)
 
         const LikeThought = async() => {
             if (!liked) {
-                const thoughtRef = doc(db, "thoughts", thought[0].title + user.uid);
+                const thoughtRef = doc(db, "thoughts", thought[0].title);
 
 // Set the "capital" field of the city 'DC'
                 await updateDoc(thoughtRef, {
@@ -170,7 +189,7 @@ setError(true)
             }
 
             else {
-                const thoughtRef = doc(db, "thoughts", thought[0].title + user.uid);
+                const thoughtRef = doc(db, "thoughts", thought[0].title);
 
                 // Set the "capital" field of the city 'DC'
                 await updateDoc(thoughtRef, {
@@ -207,7 +226,7 @@ setError(true)
         <main className="bg-black flex flex-col h-screen w-screen text-white gap-2 items-center justify-center">
             { !loading ? (<><header className="w-full flex items-center justify-between mt-5">
                 <UserCircleIcon className=' ml-4 cursor-pointer hover:stroke-blue-500 transition-colors duration-200 md:size-9 size-7' onClick={MoveToProfile}/>
-                { thought && (<h1 className="font-semibold text-xl md:text-2xl text-center max-sm:truncate w-72 md:w-auto">{thought && thought[0].title}</h1>)}
+                { thought && (<h1 className="font-semibold max-sm:text-2xl md:text-3xl text-center max-sm:truncate w-72 md:w-auto text-2xl">{thought && thought[0].title}</h1>)}
                 <Home className=' mr-4 cursor-pointer hover:stroke-blue-500 transition-colors duration-200 md:size-8' onClick={MoveToHome}/>
             </header>
             <div className="w-full h-full md:w-2/4 p-2 items-center flex flex-col mt-4">
@@ -222,24 +241,26 @@ setError(true)
             <hr className="border-neutral-500/30 w-full mt-4"/>
             <div className="w-full flex mt-4">
                 <div className="w-full flex gap-2 items-center">
-            <Heart className={ liked ? "cursor-pointer md:size-7 text-red-700" : "cursor-pointer md:size-7"} fill={liked && "#b91c1c"} onClick={LikeThought}/>
+            <Heart className={ liked ? "cursor-pointer md:size-7 text-red-700" : "cursor-pointer md:size-7"} fill={liked  ? "#b91c1c" : undefined} onClick={LikeThought}/>
             <h1 className="text-lg md:text-xl">{thought && thought[0].likes}</h1>
             <Eye className="ml-4"/>
             <h1 className="text-lg md:text-xl">{thought && thought[0].views}</h1>
             <MessageSquare className="ml-4 cursor-pointer hover:text-green-500 transition-colors duration-200" onClick={() => setComment(true)}/>
-            <h1 className="text-lg md:text-xl">{thought && thought[0].comments.length}</h1>
+            <h1 className="text-lg md:text-xl">{comments && comments.length}</h1>
                 </div>
                 <button className="w-auto bg-neutral-900 rounded-full p-2 hover:text-green-500 transition-all duration-200"  onClick={copyLink}><Share/></button>
             </div>
             <hr className="border-neutral-500/30 w-full mt-4"/>
-            <h1 className="w-full p-4 text-3xl text-center">Comments.</h1>
-            { thought && thought[0].comments.length === 0 ? (
+            <h1 className="w-full p-4 text-2xl text-center">Comments.</h1>
+            { comments && comments.length === 0 ? (
                               <div className='w-full flex items-center justify-center border-neutral-900 border-2 rounded-md mt-4 h-full mb-2'>
                               <h1 className='text-2xl text-neutral-600 text-center'>No comments yet.</h1>
                           </div>
             ) : (
-              <ul>
-                <CommentItem/>
+              <ul className="w-full h-full">
+                { comments.map((comment) => {
+                return (<CommentItem key={comment} commentId={comment}/>)
+                })}
               </ul>
             )}
             </div></>) : (
@@ -255,7 +276,7 @@ setError(true)
             </>
             )}      
             { alertType === "copied" && <AlertItem content={"Link copied."} type={"success"}/>}
-            { comment && <CommentModal onClose={() => setComment(false)} type={"comment"}/>}
+            { comment && <CommentModal onClose={() => setComment(false)} type={"comment"} SparkleName={thought[0].title} authorName={author.name}/>}
         </main>
     )
 }

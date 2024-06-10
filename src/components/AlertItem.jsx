@@ -11,8 +11,8 @@ export function AlertItem({content, type}) {
     }, [])
 
     return (
-        <div className={visible ? " fixed inset-0 w-full z-10 bg-black bg-opacity-30 flex flex-col items-center p-4 sm:p-0 text-white" : "hidden"} >
-            <div className={ visible ? " z-20 bg-neutral-900 border-neutral-800 border-2 w-full p-4 rounded flex gap-2 items-center transition-all duration-300 -translate-y-0 md:w-auto mb-4" : "-translate-y-16 duration-300"}>
+        <div className={visible ? " fixed inset-0 w-full z-10 bg-black bg-opacity-30 flex flex-col items-center p-4 text-white" : "hidden"} >
+            <div className={ visible ? " z-20 bg-neutral-900 border-neutral-800 border-2 w-full p-4 rounded flex gap-2 items-center -translate-y-0 md:w-[38rem] mb-4" : "-translate-y-16"}>
                 { type === "success" && < CircleCheck className="text-green-500"/>}
                 { type === "error" && < CircleX className="text-red-500"/>}
                 <h1>{content}</h1>

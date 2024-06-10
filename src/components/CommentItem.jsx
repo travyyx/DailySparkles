@@ -1,160 +1,203 @@
 /* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import { formatDistanceToNow } from "date-fns";
-import { useReducer, useEffect, useState} from 'react'
-import  { app, db } from '../config'
-import { query, collection, onSnapshot, where, increment, doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore'
-import { Heart } from 'lucide-react'
+import {useState, useReducer, useEffect } from 'react'
+import { CommentModal } from './CommentModal'
+import { Heart, MessageSquare, Pin, PinOff } from "lucide-react"
+import { db, app } from '../config'
+import { doc, getDoc, query, where, collection, onSnapshot, increment, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore'
+import useRunOnce from '../useRunOnce'
 import { getAuth } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
-/* eslint-disable react/prop-types */
 
 const initialState = {
-    postDate: '',
-  };
-  
-  const reducer = (state, action) => {
-    switch (action.type) {
-      case 'SET_POST_DATE':
-        return {...state, postDate: action.postDate };
-      default:
-        return state;
-    }
-  };
+  postDate: '',
+};
 
-function CommentItem({comment, content, author}) {
-
-    const [state, dispatch] = useReducer(reducer, initialState);
-    const [ liked, setLiked ] = useState(null)
-    const [ likes, setLikes ] = useState(0)
-    const [ authorData, setAuthorData ] = useState({})
-    const navigate = useNavigate()
-
-    useEffect(() => {
-      if (comment?.creationDate) {
-        const createdAtDate = comment.creationDate.toDate();
-        const postDate = formatDistanceToNow(createdAtDate, { includeSeconds: true, addSuffix: true });
-        dispatch({ type: 'SET_POST_DATE', postDate });
-      }
-    }, [comment?.creationDate]);
-
-    const getUserLikes = async() => {
-      const auth = getAuth(app)
-      const userdata = auth.currentUser
-
-      const q = query(collection(db, "users"), where("id", "==", userdata.uid))
-
-      const unsub = await onSnapshot(q, (querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          if (doc.data().liked.includes(comment.id)) {
-              setLiked(true)
-          }
-          else {
-              setLiked(false)
-          }
-        })
-      })
-      
-      return () => unsub()
-    }
-
-    const getAuthorData = async() => {
-
-      const q = query(collection(db, "users"), where("id", "==", author))
-
-      const unsub = await onSnapshot(q, (querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          setAuthorData(doc.data())
-        })
-      })
-      
-      return () => unsub()
-    }
-
-    useEffect(() => {
-      getUserLikes()
-    }, [])
-
-    useEffect(() => {
-      getAuthorData()
-    }, [])
-
-    const LikeComment = async() => {
-      const auth = getAuth(app)
-      const userdata = auth.currentUser
-      if (!liked) {
-          const commentRef = doc(db, "comment", content + userdata.uid);
-
-          await updateDoc(commentRef, {
-          likes: increment(1)
-          });
-          getUserLikes()
-
-          const userRef = doc(db, "users", userdata.uid);
-
-          await updateDoc(userRef, {
-              liked: arrayUnion(comment.id)
-          });
-
-
-      }
-
-      else {
-          const commentRef = doc(db, "thoughts", comment + userdata.uid);
-
-          await updateDoc(commentRef, {
-              likes: increment(-1)
-            });
-            getUserLikes()
-          
-          const userRef = doc(db, "users", userdata.uid);
-          
-          await updateDoc(userRef, {
-              liked: arrayRemove(comment.id)
-          });
-      }
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'SET_POST_DATE':
+      return {...state, postDate: action.postDate };
+    default:
+      return state;
   }
+};
+
+function CommentItem({commentId}) {
+  const [user, setUser] = useState(null)
+  const [commentData, setCommentData] = useState(null)
+  const [authorData, setAuthorData] = useState(null)
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const [ liked, setLiked ] = useState(null)
+  const [ likes, setLikes ] = useState(0)
+  const navigate = useNavigate()
+  const auth = getAuth()
+
 
 
   useEffect(() => {
-    const auth = getAuth(app)
-    const user = auth.currentUser
-    const unsub = onSnapshot(doc(db, "thoughts", content + user.uid), (doc) => {
-      setLikes(doc.data().likes)
-  });
-  return () => unsub();
-  }, []);
+      const auth = getAuth(app)
+      const unsubscribe = auth.onAuthStateChanged((user) => {
+        if (user) {
+          setUser(user)
+        }
+        else {
+          navigate("/")
+        }
+      })
+  
+      return () => unsubscribe()
+    }, [auth, navigate]);
 
-  const MoveToUser = async() => {
-    const auth = getAuth(app)
-    const user = auth.currentUser
-    if (author === user.uid) {
-        navigate("/profile")
-    }
-    else {
-        navigate(`/${author}`)
-    }
 
-    
+  useEffect(() => {
+    if (commentData?.creationDate) {
+      const createdAtDate = commentData.creationDate.toDate();
+      const postDate = formatDistanceToNow(createdAtDate, { includeSeconds: true, addSuffix: true });
+      dispatch({ type: 'SET_POST_DATE', postDate });
+    }
+  }, [commentData?.creationDate]);
+
+  const getCommentData = async() => {
+    const commentRef = doc(db, "comments", commentId)
+    const docSnap =  await getDoc(commentRef)
+    setCommentData(docSnap.data())
+    getAuthorData(docSnap.data().author)
   }
-    return (
-        <div className="w-full border-neutral-900 border-2 flex justify-between items-center gap-3 p-4 md:rounded-md cursor-pointer md:mt-4 mt-2 hover:bg-neutral-950 transition-colors duration-200 px-4 rounded flex-col">
-            <div className="w-full flex items-center gap-2 justify-between">
-                <div className="flex gap-2 items-center">
-                <img src={authorData && authorData.photoURL} alt="profile" className="rounded-full w-[42px] cursor-pointer"/>
-                <h1 className="text-lg hover:underline" onClick={MoveToUser}>{author && authorData.name}</h1>
-                </div>
-                <h1 className="text-neutral-600">{state.postDate}</h1>
-            </div>
-            <hr className="w-full border-neutral-800"/>
-            <div className="flex flex-col gap-2 text-wrap truncate w-full">
-            <h1 className="text-md hover:underline"  >{content}</h1>
-            </div>
-            <div className="w-full flex gap-2 items-center justify-end">
-            <Heart className={ liked ? "cursor-pointer md:size-7 text-red-700" : "cursor-pointer md:size-7 transition-all"} fill={liked ? "#b91c1c" : "#ffffff"} onClick={LikeComment}/>
-            <h1 className="text-lg md:text-xl">{likes && likes}</h1>
-            </div>
-        </div>
-    )
+
+  const getAuthorData = async(authorId) => {
+    const authorRef = doc(db, "users", authorId)
+    const docSnap = await getDoc(authorRef)
+    setAuthorData(docSnap.data())
+  }
+
+  useRunOnce({
+    fn: () => {
+        getCommentData()
+    }
+});
+
+useEffect(() => {
+  getLikedState()
+})
+
+const MoveToUser = async() => {
+  const auth = getAuth(app)
+  const user = auth.currentUser
+  if (authorData.id === user.uid) {
+      navigate("/profile")
+  }
+  else {
+      navigate(`/${authorData.id}`)
+  }
 }
+
+const getLikedState = async() => {
+  const auth = getAuth(app)
+  const userdata = auth.currentUser
+
+  const q = query(collection(db, "users"), where("id", "==", userdata.uid))
+
+  const unsub = await onSnapshot(q, (querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      if (doc.data().liked.includes(commentId)) {
+          setLiked(true)
+      }
+      else {
+          setLiked(false)
+      }
+    })
+  })
+  
+  return () => unsub()
+}
+
+useEffect(() => {
+  const auth = getAuth(app)
+  const user = auth.currentUser
+  const unsub = onSnapshot(doc(db, "comments", commentId), (doc) => {
+    setLikes(doc.data().likes)
+});
+return () => unsub();
+}, []);
+
+const LikeThought = async() => {
+  const auth = getAuth(app)
+  const userdata = auth.currentUser
+  if (!liked) {
+      const thoughtRef = doc(db, "comments", commentId);
+
+      await updateDoc(thoughtRef, {
+      likes: increment(1)
+      });
+      getLikedState()
+
+      const userRef = doc(db, "users", userdata.uid);
+
+      await updateDoc(userRef, {
+          liked: arrayUnion(commentId)
+      });
+
+
+  }
+
+  else {
+      const thoughtRef = doc(db, "comments", commentId);
+
+      await updateDoc(thoughtRef, {
+          likes: increment(-1)
+        });
+        getLikedState()
+      
+      const userRef = doc(db, "users", userdata.uid);
+      
+      await updateDoc(userRef, {
+          liked: arrayRemove(commentId)
+      });
+  }
+}
+
+
+  return (
+    <div className='w-full h-auto border-neutral-800 border-2 p-4 hover:bg-neutral-950 transition-colors duration-200 rounded'>
+      <div className='flex items-center justify-between'>
+        <div className='flex gap-2 w-full items-center'>
+        <img src={authorData && authorData.photoURL} alt="author picture" className='w-[42px] rounded-full h-[42px]'/>
+        <h1 className='text-xl cursor-pointer hover:underline' onClick={MoveToUser}>{authorData && authorData.name}</h1>
+        { user && authorData && user.uid == authorData.id && commentData && commentData.isPinned &&(<Pin className=" text-blue-500 fill-blue-500" size={24} fill="currentFill"/>)}
+        </div>
+        <h1 className='text-lg text-neutral-500 w-full text-right'>{state.postDate}</h1>
+      </div>
+      <div>
+        <h1 className='text-xl my-4'>{commentData && commentData.content}</h1>
+        <hr className='border-neutral-800'/>
+        <div className='flex items-center gap-5 p-2 justify-between'>
+          <h1 className='text-lg'>Replies.</h1>
+          <div className='w-full flex gap-5 items-center justify-end'>
+          <div className='flex gap-2 items-center'>
+          <Heart className={ liked ? "cursor-pointer md:size-7 text-red-700" : "cursor-pointer md:size-7 transition-all"} fill={liked ? "#b91c1c" : "#ffffff"} onClick={LikeThought}/>
+          <h1 className="text-lg md:text-xl">{likes && likes}</h1>
+          </div>
+          <div className='flex gap-2 items-center'>
+            <MessageSquare/>
+            <h1 className="text-lg md:text-xl">{likes && likes}</h1>
+          { user && authorData && user.uid === authorData.id && (
+            commentData && commentData.isPinned ? (
+              <PinOff className="hover:text-red-500 transition-colors duration-200 cursor-pointer"/>
+             ) : (<Pin className="hover:text-blue-500 transition-colors duration-200 cursor-pointer"/>)
+          )}
+          </div>
+          </div>
+        </div>
+      </div>
+          <hr className='border-neutral-800'/>
+      <div></div>
+      <div>
+        <h1 className='text-lg w-full text-center mt-2 text-blue-500 cursor-pointer hover:underline'>Show More Replies (5)</h1>
+      </div>
+    </div>
+  )
+}
+
 
 export default CommentItem;

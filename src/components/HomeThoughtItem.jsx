@@ -82,7 +82,7 @@ function HomeThoughtItem({thought, content, title, author}) {
       const auth = getAuth(app)
       const userdata = auth.currentUser
       if (!liked) {
-          const thoughtRef = doc(db, "thoughts", title + userdata.uid);
+          const thoughtRef = doc(db, "thoughts", title);
 
           await updateDoc(thoughtRef, {
           likes: increment(1)
@@ -99,7 +99,7 @@ function HomeThoughtItem({thought, content, title, author}) {
       }
 
       else {
-          const thoughtRef = doc(db, "thoughts", title + userdata.uid);
+          const thoughtRef = doc(db, "thoughts", title);
 
           await updateDoc(thoughtRef, {
               likes: increment(-1)
@@ -118,7 +118,7 @@ function HomeThoughtItem({thought, content, title, author}) {
   useEffect(() => {
     const auth = getAuth(app)
     const user = auth.currentUser
-    const unsub = onSnapshot(doc(db, "thoughts", thought.title + user.uid), (doc) => {
+    const unsub = onSnapshot(doc(db, "thoughts", thought.title), (doc) => {
       setLikes(doc.data().likes)
   });
   return () => unsub();

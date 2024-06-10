@@ -90,7 +90,7 @@ setError(true)
             if ( dailyThoughts != 0) {
               const auth = getAuth(app)
               const user = auth.currentUser
-              const docRef = await setDoc(doc(db, "thoughts", title + user.uid), {
+              const docRef = await setDoc(doc(db, "thoughts", title), {
                 title: title,
                 content: content,
                 id: id,
@@ -171,7 +171,7 @@ setError(true)
         await updateDoc(userRef, {
           thoughts: arrayRemove(thought.id)
         });
-        const thoughtRef = doc(db, "thoughts", thought.title + user.uid)
+        const thoughtRef = doc(db, "thoughts", thought.title)
       await deleteDoc(thoughtRef)
       setAlertType("deleted")
       delay(5000).then(() => setAlertType(""))
