@@ -91,9 +91,9 @@ function HomePage() {
 
       useEffect(() => {
         if (navigator.onLine) {
-          return
-        } else {
-          setError(true)
+          setLoading(true)
+        } else {     
+          alert("You are offline.")
         }
       }, [])
 
@@ -144,12 +144,13 @@ function HomePage() {
               TopicsList.push(doc.data())
               })
               setTopics(TopicsList)
-              setLoading(false)
               })
-        } catch(error) {
-setError(true)
-        }
-
+              } catch(error) {
+                console.log(error)
+                setError(true)
+                }
+                
+                setLoading(false)
       }
 
 

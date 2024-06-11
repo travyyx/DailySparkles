@@ -79,7 +79,7 @@ function CommentItem({commentId}) {
 
 useEffect(() => {
   getLikedState()
-})
+}, [])
 
 const MoveToUser = async() => {
   const auth = getAuth(app)
@@ -192,21 +192,22 @@ function formatNumber(count) {
         <h1 className='text-xl my-4'>{commentData && commentData.content}</h1>
         <hr className='border-neutral-800'/>
         <div className='flex items-center gap-5 p-2 justify-between mt-1'>
-            { commentData && commentData.replies.length != 0 ? (<h1 className='text-lg w-full text-blue-500 cursor-pointer hover:underline'>Show Replies ({formatNumber(commentData.replies.length)})</h1>) : (<h1 className='text-lg w-full text-blue-500/30 cursor-pointer hover:underline'>No Replies to show.</h1>)}
-          <div className='w-full flex gap-5 items-center justify-end'>
+          <div className='w-full flex gap-5 items-center justify-between'>
           <div className='flex gap-2 items-center'>
-          <Heart className={ liked ? "cursor-pointer md:size-7 text-red-700" : "cursor-pointer md:size-7 transition-all"} fill={liked ? "#b91c1c" : "#ffffff"} onClick={LikeThought}/>
+          <button><Heart className={ liked ? "cursor-pointer md:size-7 text-red-700" : "cursor-pointer md:size-7 transition-all"} fill={liked ? "#b91c1c" : "#ffffff"} onClick={LikeThought}/></button>
           <h1 className="text-lg md:text-xl">{likes && formatNumber(likes)}</h1>
           </div>
           <div className='flex gap-2 items-center'>
-            <MessageSquare/>
+            <button>                  
+              <MessageSquare className=" cursor-pointer hover:text-green-500 transition-colors duration-200"/>
+              </button>
             <h1 className="text-lg md:text-xl">{commentData && formatNumber(commentData.replies.length)}</h1>
+          </div>
           { user && authorData && user.uid === authorData.id && (
             commentData && commentData.isPinned ? (
-              <PinOff className="hover:text-red-500 transition-colors duration-200 cursor-pointer ml-2" onClick={SetCommentPinState}/>
-             ) : (<Pin className="hover:text-blue-500 transition-colors duration-200 cursor-pointer ml-2" onClick={SetCommentPinState}/>)
+              <button><PinOff className="hover:text-red-500 transition-colors duration-200 cursor-pointer" onClick={SetCommentPinState}/></button>
+             ) : (<button><Pin className="hover:text-blue-500 transition-colors duration-200 cursor-pointer" onClick={SetCommentPinState}/></button>)
           )}
-          </div>
           </div>
         </div>
       </div>
