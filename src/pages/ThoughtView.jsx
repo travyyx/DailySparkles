@@ -24,7 +24,10 @@ function UserThought() {
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(true)
     const [comment, setComment] = useState(false)
+    const [type, setType] = useState("comment")
     const [comments, setComments] = useState([])
+    const [commentData, setCommentData] = useState(null)
+    const [replyAuthor, setReplyAuthor] = useState(null)
     const auth = getAuth()
     const params = useParams()
     const delay = (milliseconds) => new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -233,6 +236,18 @@ function UserThought() {
           }
         }
         
+        const ReplyToComment = async(comment) => {
+          setComment(true)
+          setType("reply")
+          const commentRef = doc(db, "comments", comment)
+          const docSnap =  await getDoc(commentRef)
+          await setCommentData(docSnap.data())
+          const authorRef = doc(db, "users", commentData.author)
+          const docSnap2 = await getDoc(authorRef)
+          setReplyAuthor(docSnap2.data())
+
+        }
+        
 
     return (
         <main className="bg-black flex flex-col h-screen w-screen text-white gap-2 items-center justify-center">
@@ -257,7 +272,10 @@ function UserThought() {
             <h1 className="text-lg md:text-xl">{thought && formatNumber(thought[0].likes)}</h1>
             <Eye className="ml-4"/>
             <h1 className="text-lg md:text-xl">{thought && formatNumber(thought[0].views)}</h1>
-            <MessageSquare className="ml-4 cursor-pointer hover:text-green-500 transition-colors duration-200" onClick={() => setComment(true)}/>
+            <MessageSquare className="ml-4 cursor-pointer hover:text-green-500 transition-colors duration-200" onClick={() => {
+              setComment(true)
+              setType("comment")
+            }}/>
             <h1 className="text-lg md:text-xl">{comments && formatNumber(comments.length)}</h1>
                 </div>
                 <button className="w-auto bg-neutral-900 rounded-full p-2 hover:text-green-500 transition-all duration-200"  onClick={copyLink}><Share/></button>
@@ -271,7 +289,7 @@ function UserThought() {
             ) : (
               <ul className="w-full h-[430px] gap-3 flex flex-col overflow-auto [&::-webkit-scrollbar]:w-0">
                 { comments.map((comment) => {
-                return (<CommentItem key={comment} commentId={comment}/>)
+                return (<CommentItem key={comment} commentId={comment} ReplyTo={ReplyToComment}/>)
                 })}
               </ul>
             )}
@@ -288,7 +306,7 @@ function UserThought() {
             </>
             )}      
             { alertType === "copied" && <AlertItem content={"Link copied."} type={"success"}/>}
-            { comment && <CommentModal onClose={() => setComment(false)} type={"comment"} SparkleName={thought[0].title} authorName={author.name}/>}
+            { comment && <CommentModal onClose={() => setComment(false)} type={type} SparkleName={commentData ? commentData.id : thought[0].title} authorName={replyAuthor ? replyAuthor.name : author.name}/>}
         </main>
     )
 }

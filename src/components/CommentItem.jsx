@@ -23,9 +23,10 @@ const reducer = (state, action) => {
   }
 };
 
-function CommentItem({commentId}) {
+function CommentItem({commentId, ReplyTo}) {
   const [user, setUser] = useState(null)
   const [commentData, setCommentData] = useState(null)
+  const [comment, setComment] = useState(false)
   const [authorData, setAuthorData] = useState(null)
   const [state, dispatch] = useReducer(reducer, initialState);
   const [ liked, setLiked ] = useState(null)
@@ -178,8 +179,12 @@ function formatNumber(count) {
   }
 }
 
+function OpenComment() {
+  navigate("/")
+}
+
   return (
-    <div className='w-full h-auto border-neutral-800 border-2 p-4 hover:bg-neutral-950 transition-colors duration-200 rounded'>
+      <div className='w-full h-auto border-neutral-800 border-2 p-4 hover:bg-neutral-950 transition-colors duration-200 rounded'>
       <div className='flex items-center justify-between'>
         <div className='flex gap-2 w-full items-center'>
         <img src={authorData && authorData.photoURL} alt="author picture" className='w-[42px] rounded-full h-[42px]'/>
@@ -199,7 +204,7 @@ function formatNumber(count) {
           </div>
           <div className='flex gap-2 items-center'>
             <button>                  
-              <MessageSquare className=" cursor-pointer hover:text-green-500 transition-colors duration-200"/>
+              <MessageSquare className=" cursor-pointer hover:text-green-500 transition-colors duration-200" onClick={ReplyTo}/>
               </button>
             <h1 className="text-lg md:text-xl">{commentData && formatNumber(commentData.replies.length)}</h1>
           </div>
@@ -212,7 +217,9 @@ function formatNumber(count) {
         </div>
       </div>
     </div>
+    
   )
+  
 }
 
 

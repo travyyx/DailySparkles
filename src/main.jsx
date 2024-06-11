@@ -12,6 +12,7 @@ import UserThoughtsPage from './pages/UserThoughts.jsx'
 import UserThought from './pages/ThoughtView.jsx'
 import HomePage from './pages/HomePage.jsx'
 import TopicPage from './pages/TopicsPage.jsx'
+import { CommentView } from './pages/CommentView.jsx'
 
 
 const router = createBrowserRouter([
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
   {
     path: '/topic/:name',
     element: <TopicPage/>
+  },
+  {
+    path: '/sparkle/:sparkleId/comment/:id',
+    element: <CommentView/>
   }
 ])
 
