@@ -13,6 +13,7 @@ export function CommentModal({onClose, type, SparkleName, commentId, authorName}
     const { register, handleSubmit, formState: {errors},  watch} = useForm();
     const [textContent, setTextContent] = useState("")
 
+
     const onSubmit = async(data) => {
         const uniqueId = () => {
             const dateString = Date.now().toString(36);
@@ -21,7 +22,7 @@ export function CommentModal({onClose, type, SparkleName, commentId, authorName}
           };
           const id = uniqueId()
         const auth = getAuth(app)
-        const user = auth.currentUser
+        const user = auth.currentUser 
         if (type === "comment") {
           await setDoc(doc(db, "comments", id), {
               content: data.comment,
@@ -36,7 +37,8 @@ export function CommentModal({onClose, type, SparkleName, commentId, authorName}
               comments: arrayUnion(id)
             })
         } else {
-          const commentRef = doc(db, "comments", commentId ? commentId : "")
+          console.log(commentId)
+          const commentRef = doc(db, "comments", commentId)
           await updateDoc(commentRef, {
             replies: arrayUnion(id)
           })
@@ -51,7 +53,7 @@ export function CommentModal({onClose, type, SparkleName, commentId, authorName}
 
     return (
         <div className="fixed inset-0 bg-black backdrop-blur-sm bg-opacity-30 flex flex-col items-center justify-center p-4 sm:p-0 text-white">
-            <div className="border-neutral-900 m-4 p-4 rounded w-full md:w-[400px] border-2 bg-neutral-950">
+            <div className="border-neutral-900 m-4 p-4 rounded w-full md:w-[600px] border-2 bg-neutral-950">
                 <div className='flex mb-4 items-center w-full justify-between'>
                 <h1 className='text-2xl md:text-3xl'>{type === "comment" ? "Comment on " : "Reply to "}<span className='text-blue-500'>{authorName}</span>{type === "comment" ? " sparkle." : " comment."}</h1>
                 <X size={32} id='close' className='cursor-pointer hover:text-red-500 transition-colors duration-200' onClick={onClose}/>

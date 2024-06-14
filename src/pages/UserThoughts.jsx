@@ -103,7 +103,7 @@ function UserThoughtPage() {
 }
 
 const openThought = async(thought) => {
-  navigate(`/thought/${thought.id}`)
+  navigate(`/sparkle/${thought.id}`)
 }
 
 const MoveToHome = async() => {

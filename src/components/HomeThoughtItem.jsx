@@ -151,21 +151,21 @@ function HomeThoughtItem({thought, content, title, author}) {
       navigate(`/sparkle/${thought.id}`)
     }
     return (
-        <div className="w-full border-neutral-900 border-2 flex justify-between items-center gap-3 p-4 md:rounded-md cursor-pointer md:mt-4 mt-2 hover:bg-neutral-950 transition-colors duration-200 px-4 rounded flex-col">
+        <div className="w-full border-neutral-900 border-2 flex justify-between items-center gap-3 p-4 md:rounded-md cursor-pointer md:mt-4 mt-2 hover:bg-neutral-950 transition-colors duration-200 px-4 rounded flex-col" tabIndex={0}>
             <div className="w-full flex items-center gap-2 justify-between">
                 <div className="flex gap-2 items-center">
                 {authorData ? (<img src={authorData && authorData.photoURL} alt="profile" className="rounded-full w-[42px] cursor-pointer"/>) : (<div className="w-[42px] rounded-full bg-neutral-600"></div>)}
-                <h1 className="text-lg hover:underline" onClick={MoveToUser}>{author && authorData.name}</h1>
+                <h1 className="text-lg hover:underline" onClick={MoveToUser} tabIndex={0}>{author && authorData.name}</h1>
                 </div>
                 <h1 className="text-neutral-600">{state.postDate}</h1>
             </div>
             <hr className="w-full border-neutral-800"/>
             <div className="flex flex-col gap-2 text-wrap truncate w-full">
             <h1 className="text-xl truncate">{title}</h1>
-            <h1 className="text-md hover:underline"  onClick={MoveToSparkle}>{content}</h1>
+            <h1 className="text-md hover:underline"  onClick={MoveToSparkle} tabIndex={0}>{content}</h1>
             </div>
             <div className="w-full flex gap-2 items-center justify-end">
-            <Heart className={ liked ? "cursor-pointer md:size-7 text-red-700" : "cursor-pointer md:size-7 transition-all"} fill={liked ? "#b91c1c" : "#ffffff"} onClick={LikeThought}/>
+            <Heart className={ liked ? "cursor-pointer md:size-7 text-red-700" : "cursor-pointer md:size-7 transition-all"} fill={liked ? "#b91c1c" : "#ffffff"} onClick={LikeThought} tabIndex={0}/>
             <h1 className="text-lg md:text-xl">{likes && formatNumber(likes)}</h1>
             </div>
         </div>

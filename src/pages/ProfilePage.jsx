@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getAuth, signOut } from 'firebase/auth'
 import  { app, db } from '../config'
-import { Search, List,BadgeCheck} from 'lucide-react'
+import { Search, List,BadgeCheck, Pencil} from 'lucide-react'
 import { query, collection, onSnapshot, where} from 'firebase/firestore'
 import { EditModal } from '../components/EditProfileModal'
 import FollowersList from '../components/FollowersList'
@@ -127,7 +127,12 @@ setError(true)
           </header>
             <div className='flex flex-col h-screen w-screen text-white gap-2 items-center justify-center'>
                 <div className='flex flex-col items-center justify-center gap-3'>
-            <img src={user ? user.photoURL : ""} alt="Profile picture." className='rounded-full cursor-pointer md:size-24 hover:-translate-y-1 hover:scale-105 transition-all duration-200' onClick={showEdit} title='Edit profile.'/>
+                  <div className='relative'>
+            <img src={user ? user.photoURL : ""} alt="Profile picture." className='rounded-full cursor-pointer md:size-24 hover:-translate-y-1 hover:scale-105 transition-all duration-200 peer' onClick={showEdit} title='Edit profile.'/>
+                    <div className='rounded-full bg-neutral-800 p-2 w-8 absolute -bottom-1 right-1 peer-hover:hidden'>
+                    <Pencil size={18} className='peer-hover:hidden'/>
+                    </div>
+                  </div>
             <div className='w-full flex gap-2 items-center justify-center'>
         <h1 className="text-3xl font-semibold md:text-4xl">Welcome {user ? user.displayName : "Guest"}</h1>
         { verified && <BadgeCheck size={28}/>}

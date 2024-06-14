@@ -23,7 +23,7 @@ const reducer = (state, action) => {
   }
 };
 
-function CommentItem({commentId, ReplyTo}) {
+function CommentItem({commentId, ReplyTo, sparkleId,sparkleAuthor}) {
   const [user, setUser] = useState(null)
   const [commentData, setCommentData] = useState(null)
   const [comment, setComment] = useState(false)
@@ -180,21 +180,21 @@ function formatNumber(count) {
 }
 
 function OpenComment() {
-  navigate("/")
+  navigate(`/sparkle/${sparkleId}/comment/${commentId}`)
 }
 
   return (
-      <div className='w-full h-auto border-neutral-800 border-2 p-4 hover:bg-neutral-950 transition-colors duration-200 rounded'>
+      <div className='w-full h-auto border-neutral-800 border-2 p-4 hover:bg-neutral-950 transition-colors duration-200 rounded' tabIndex={0}>
       <div className='flex items-center justify-between'>
         <div className='flex gap-2 w-full items-center'>
         <img src={authorData && authorData.photoURL} alt="author picture" className='w-[42px] rounded-full h-[42px]'/>
-        <h1 className='text-xl cursor-pointer hover:underline' onClick={MoveToUser}>{authorData && authorData.name}</h1>
+        <h1 className='text-xl cursor-pointer hover:underline' tabIndex={0} onClick={MoveToUser}>{authorData && authorData.name}</h1>
         { user && authorData && user.uid == authorData.id && commentData && commentData.isPinned &&(<Pin className=" text-blue-500 fill-blue-500" size={24} fill="currentFill"/>)}
         </div>
         <h1 className='text-lg text-neutral-500 w-full text-right'>{state.postDate}</h1>
       </div>
       <div>
-        <h1 className='text-xl my-4'>{commentData && commentData.content}</h1>
+        <h1 className='text-xl my-4 hover:underline cursor-pointer' onClick={OpenComment}>{commentData && commentData.content}</h1>
         <hr className='border-neutral-800'/>
         <div className='flex items-center gap-5 p-2 justify-between mt-1'>
           <div className='w-full flex gap-5 items-center justify-between'>
@@ -208,7 +208,7 @@ function OpenComment() {
               </button>
             <h1 className="text-lg md:text-xl">{commentData && formatNumber(commentData.replies.length)}</h1>
           </div>
-          { user && authorData && user.uid === authorData.id && (
+          { user && authorData && user.uid === authorData.id && sparkleAuthor === user.uid && (
             commentData && commentData.isPinned ? (
               <button><PinOff className="hover:text-red-500 transition-colors duration-200 cursor-pointer" onClick={SetCommentPinState}/></button>
              ) : (<button><Pin className="hover:text-blue-500 transition-colors duration-200 cursor-pointer" onClick={SetCommentPinState}/></button>)

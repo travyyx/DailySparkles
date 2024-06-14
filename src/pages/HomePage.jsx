@@ -158,12 +158,12 @@ function HomePage() {
         <main className="bg-black flex flex-col h-screen w-screen text-white gap-2 items-center justify-center border-x-2 border-neutral-900">
            { !loading ? (<><header className="w-screen flex items-center justify-between p-2 md:p-6 ">
             <div className="w-full flex gap-0.5">
-            <h1 className="text-2xl font-semibold ml-2 cursor-pointer md:text-3xl hover:text-blue-400 duration-200 peer hover:-translate-y-1 hover:scale-100 transition-all" onClick={() => window.location.reload()}>DailySparkles.</h1>
+            <h1 className="text-2xl font-semibold ml-2 cursor-pointer md:text-3xl hover:text-blue-400 duration-200 peer hover:-translate-y-1 hover:scale-100 transition-all" onClick={() => window.location.reload()} tabIndex={0}>DailySparkles.</h1>
             <Sparkles className="size-5 peer-hover:text-yellow-500 duration-700 peer-hover:-translate-y-1 peer-hover:scale-100 transition-all md:size-6"/>
             </div>
             <div className="flex gap-7 items-center">
-            <Search className="size-14 cursor-pointer hover:text-blue-500 transition-colors duration-200 md:size-9" onClick={() => navigate("/search")}/>
-            {user ? (<img src={user && user.photoURL} alt="profile" className="rounded-full w-[42px] cursor-pointer mr-1 md:size-11 hover:-translate-y-1 hover:scale-105 transition-all duration-200" onClick={() => navigate("/profile")}/>) : (<div className=" bg-neutral-500 w-[42px]"></div>)}
+            <Search className="size-14 cursor-pointer hover:text-blue-500 transition-colors duration-200 md:size-9" onClick={() => navigate("/search")} tabIndex={0}/>
+            {user ? (<img src={user && user.photoURL} alt="profile" className="rounded-full w-[42px] cursor-pointer mr-1 md:size-11 hover:-translate-y-1 hover:scale-105 transition-all duration-200" onClick={() => navigate("/profile")} tabIndex={0}/>) : (<div className=" bg-neutral-500 w-[42px]"></div>)}
 
             </div>
            </header>

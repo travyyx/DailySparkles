@@ -239,12 +239,15 @@ function UserThought() {
         const ReplyToComment = async(comment) => {
           setComment(true)
           setType("reply")
+          console.log(comment)
           const commentRef = doc(db, "comments", comment)
           const docSnap =  await getDoc(commentRef)
           await setCommentData(docSnap.data())
+          console.log(commentData)
           const authorRef = doc(db, "users", commentData.author)
           const docSnap2 = await getDoc(authorRef)
-          setReplyAuthor(docSnap2.data())
+          await setReplyAuthor(docSnap2.data())
+          console.log(replyAuthor)
 
         }
         
@@ -289,7 +292,7 @@ function UserThought() {
             ) : (
               <ul className="w-full h-[430px] gap-3 flex flex-col overflow-auto [&::-webkit-scrollbar]:w-0">
                 { comments.map((comment) => {
-                return (<CommentItem key={comment} commentId={comment} ReplyTo={ReplyToComment}/>)
+                return (<CommentItem key={comment} commentId={comment} ReplyTo={() => ReplyToComment(comment)} sparkleId={params.id} sparkleAuthor={author && author.id}/>)
                 })}
               </ul>
             )}
@@ -306,7 +309,8 @@ function UserThought() {
             </>
             )}      
             { alertType === "copied" && <AlertItem content={"Link copied."} type={"success"}/>}
-            { comment && <CommentModal onClose={() => setComment(false)} type={type} SparkleName={commentData ? commentData.id : thought[0].title} authorName={replyAuthor ? replyAuthor.name : author.name}/>}
+            { comment && type === "comment" && (<CommentModal onClose={() => setComment(false)} type={"comment"} SparkleName={thought[0].title} authorName={author.name}/>)}
+            { comment && type === "reply" && (<CommentModal onClose={() => setComment(false)} type={"reply"} commentId={commentData && commentData.id} authorName={replyAuthor && replyAuthor.name}/>)}
         </main>
     )
 }

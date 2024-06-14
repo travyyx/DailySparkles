@@ -177,9 +177,10 @@ setError(true)
           </header>
             <div className='flex flex-col h-screen w-screen text-white gap-2 items-center justify-center'>
                 <div className='flex flex-col items-center justify-center gap-3'>
-            <img src={userData[0] ? userData[0].photoURL : ""} alt="Profile picture." className='rounded-full md:size-24' />
+        
+          <img src={userData[0] ? userData[0].photoURL : ""} alt="Profile picture." className='rounded-full md:size-24' />
         <h1 className="text-3xl font-semibold md:text-4xl">{userData[0] ? userData[0].name : "Guest"}</h1>
-        <h1 className='text-neutral-400 text-clip text-center w-64'>{bio ? bio : "No bio yet."}</h1>
+        <h1 className='text-neutral-400 text-clip text-center w-64 text-2xl'>{bio ? bio : "No bio yet."}</h1>
                 </div>
 
         <div className='flex gap-8 w-full items-center justify-center mt-4 text-neutral-500 md:gap-10'>
