@@ -19,6 +19,7 @@ export function CommentView() {
     const [creationDate, setCreationDate] = useState(null);
     const [user, setUser] = useState(null)
     const [error, setError] = useState(false)
+    const [replyAuthor, setReplyAuthor] = useState(null)
     const auth = getAuth()
     const params = useParams()
     const [comment, setComment] = useState(false)
@@ -42,7 +43,7 @@ export function CommentView() {
         const auth = getAuth(app)
         const userdata = auth.currentUser
   
-        const q = query(collection(db, "users"), where("id", "==", userdata.uid))
+        const q = query(collection(db, "users"), where("id", "==",userdata && userdata.uid))
   
         const unsub = await onSnapshot(q, (querySnapshot) => {
           querySnapshot.forEach((doc) => {
@@ -81,11 +82,12 @@ export function CommentView() {
 
     useEffect(() => {
       if (commentData) {
-          getAuthorData(commentData[0].author_id)
-          const createDate = formatDistanceToNow(commentData[0].createdAt.toDate(), { includeSeconds: true, addSuffix: true})
+          getAuthorData(commentData.author)
+          console.log(commentData.creationDate)
+          const createDate = formatDistanceToNow(commentData.creationDate.toDate(), { includeSeconds: true, addSuffix: true})
           setCreationDate(createDate)
       }
-    })
+    }, [commentData])
 
     const MoveToSparkle = async() => {
         navigate(`/sparkle/${params.sparkleId}`)
@@ -170,6 +172,10 @@ export function CommentView() {
 
         return () => unsub()
       }
+
+      useEffect(() => {
+        getComment()
+      }, [])
     
     const ReplyToComment = async(comment) => {
       setComment(true)
@@ -186,23 +192,22 @@ export function CommentView() {
 
     return (
         <main className="bg-black flex flex-col h-screen w-screen text-white gap-2 items-center justify-center p-4">
-            <header className="w-full flex items-center justify-between md:w-[500px]">
-                <ArrowLeft className="md:size-7"/>
+            <header className="w-full flex items-center justify-between md:w-[500px] mt-2">
+                <ArrowLeft className="md:size-9 size-7"/>
                 <h1 className="text-xl md:text-2xl font-bold">Comment</h1>
-                <Home className="md:size-7"/>
+                <Home className="md:size-9 size-7"/>
             </header>
             <hr className="border-neutral-800 w-full md:w-[500px]"/>
             <div className="w-full flex items-center justify-between md:w-[500px]">
                 <div className="w-full flex items-center gap-2">
-                    <img src="" alt="" />
-                    <h1 className="text-lg md:text-xl">Author Name</h1>
-                    <Pin className="md:size-7"/>
-                    <PinOff className="md:size-7"/>
+                    <img src={author && author.photoURL} alt="" width={48} height={48} className="rounded-full"/>
+                    <h1 className="text-lg md:text-xl">{author && author.name}</h1>
+                    { commentData && commentData.isPinned && (<Pin className="md:size-7"/>)}
                 </div>
-                <h1 className="text-lg md:text-xl text-neutral-500">Date</h1>
+                <h1 className="text-lg md:text-xl text-neutral-500 w-full text-right">{creationDate && creationDate}</h1>
             </div>
-            <div className="w-full mt-4 md:w-[500px]">
-                <h1 className="w-96 text-lg md:text-xl">Content</h1>
+            <div className="w-full mt-2 md:w-[500px]">
+                <h1 className="w-96 text-lg md:text-xl">{commentData && commentData.content}</h1>
                 <hr className="border-neutral-800 w-full mt-4 mb-2"/>
                 <div className="w-full flex justify-between">
                     <div className="flex gap-2 items-center">
@@ -210,9 +215,9 @@ export function CommentView() {
                         <h1 className="text-xl md:text-2xl">0</h1>
                     </div>
                     <div className="flex gap-2 items-center">
-                    <Pin className="md:size-7"/>
+                    { commentData && commentData.isPinned && author && author.uid === user.uid ? (<Pin className="md:size-7"/>) :(
                     <PinOff className="md:size-7"/>
-                    <h1 className="text-xl md:text-2xl">0</h1>
+                    )}
                     </div>
                     <div className="flex gap-2 items-center">
                     <MessageSquare className="md:size-18"/>
@@ -226,7 +231,7 @@ export function CommentView() {
                 { replies && replies.length != 0 ? (
                     <ul></ul>
                 ) : (
-                    <div className="w-full flex border h-[500px] rounded-lg border-neutral-800 items-center justify-center">
+                    <div className="w-full flex border h-[470px] rounded-lg border-neutral-800 items-center justify-center">
                         <h1 className="text-2xl md:text-3xl text-neutral-500">No replies yet.</h1>
                     </div>
                 )}
