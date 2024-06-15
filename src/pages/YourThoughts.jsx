@@ -256,7 +256,7 @@ setError(true)
   }
 
     return (
-    <main className="bg-black flex flex-col h-full w-screen text-white gap-2 items-center justify-center">
+    <main className="bg-black flex flex-col max-sm:h-full w-screen text-white gap-2 items-center justify-center h-screen">
                   { !loading ? (<><header className='w-full flex p-2 items-center justify-between mt-2'>
             { thoughts && <h1 className='text-2xl ml-2'>Sparkles: {thoughts.length}</h1>}
             <div className='flex gap-6'>
@@ -270,7 +270,7 @@ setError(true)
                   open &&
                   <>                  
                   <h1 className=' text-2xl mt-2 md:text-3xl'>Say what do you think.</h1>
-                <form className='flex flex-col justify-center items-center gap-3 mt-4 w-full p-2' onSubmit={handleSubmit(PostThought)}>
+                <form className='flex flex-col justify-center items-center gap-3 mt-4 max-sm:w-full w-[600px] p-2' onSubmit={handleSubmit(PostThought)}>
                 <label htmlFor="title" className="text-xl w-full">Sparkle Title.</label>
                 <input type="text" id="title" placeholder="My thought." {...register("title", {required: true})} className="border-neutral-900 p-1 rounded text-white placeholder:text-neutral-500 caret-neutral-500 text-xl w-full bg-transparent border-2 max-sm:text-sm"/>
                 { errors.title?.type === "required" ? <h1 className='w-full text-red-500'>This field is required.</h1> : <></>}

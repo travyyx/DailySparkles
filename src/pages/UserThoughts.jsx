@@ -110,7 +110,7 @@ const MoveToHome = async() => {
   navigate(`/${id.id}`)
 }
     return (
-        <main className="bg-black flex flex-col h-screen w-screen text-white gap-2 items-center">
+        <main className="bg-black flex flex-col h-screen w-screen text-white gap-2 items-center max-sm:h-full">
           { !isLoading ? (
             <>
             <header className='w-full flex p-2 items-center justify-between mt-2'>
