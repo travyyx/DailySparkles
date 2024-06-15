@@ -244,7 +244,7 @@ function UserThought() {
           const docSnap =  await getDoc(commentRef)
           await setCommentData(docSnap.data())
           console.log(commentData)
-          const authorRef = doc(db, "users", commentData.author)
+          const authorRef = doc(db, "users", commentData && commentData.author)
           const docSnap2 = await getDoc(authorRef)
           await setReplyAuthor(docSnap2.data())
           console.log(replyAuthor)
@@ -284,7 +284,7 @@ function UserThought() {
                 <button className="w-auto bg-neutral-900 rounded-full p-2 hover:text-green-500 transition-all duration-200"  onClick={copyLink}><Share/></button>
             </div>
             <hr className="border-neutral-500/30 w-full mt-4"/>
-            <h1 className="max-sm:text-lg w-full p-4 text-2xl text-center">Comments.</h1>
+            <h1 className="max-sm:text-xl w-full p-4 text-2xl text-center">Comments.</h1>
             { comments && comments.length === 0 ? (
                               <div className='w-full flex items-center justify-center border-neutral-900 border-2 rounded-md mt-4 h-full mb-2'>
                               <h1 className='text-2xl text-neutral-600 text-center'>No comments yet.</h1>

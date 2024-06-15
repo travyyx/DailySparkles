@@ -1,49 +1,235 @@
 import { ArrowLeft, Heart, Home, MessageSquare, Pin, PinOff } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { CommentModal } from './../components/CommentModal';
 import CommentItem from './../components/CommentItem';
 import { useState, useEffect } from "react";
+import { getAuth } from "firebase/auth";
+import { app, db } from "../config";
+import { query, where, onSnapshot, collection, doc, updateDoc, arrayRemove, arrayUnion, increment, getDoc } from "firebase/firestore";
+import { formatDistanceToNow } from "date-fns";
 
 export function CommentView() {
+    const navigate = useNavigate();
+    const [author, setAuthor] = useState(null)
+    const [commentData, setCommentData] = useState(null)
+    const [commentType, setCommentType] = useState(false)
+    const [loading, setLoading] = useState(true)
+    const [replies, setReplies] = useState([])
+    const [isLiked, setIsLiked] = useState(false)
+    const [creationDate, setCreationDate] = useState(null);
+    const [user, setUser] = useState(null)
+    const [error, setError] = useState(false)
+    const auth = getAuth()
+    const params = useParams()
+    const [comment, setComment] = useState(false)
+
+    useEffect(() => {
+        const auth = getAuth(app)
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+          if (user) {
+            setUser(user)
+          }
+          else {
+            navigate("/")
+          }
+        })
+    
+        return () => unsubscribe()
+      }, [auth, navigate]);
+
+      const getUserLikes = async() => {
+
+        const auth = getAuth(app)
+        const userdata = auth.currentUser
+  
+        const q = query(collection(db, "users"), where("id", "==", userdata.uid))
+  
+        const unsub = await onSnapshot(q, (querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            if (doc.data().liked.includes(params.id)) {
+                setIsLiked(true)
+            }
+            else {
+                setIsLiked(false)
+            }
+          })
+        })
+        
+        return () => unsub()
+
+    }
+
+    const getAuthorData = async(authorId) => {
+
+
+      const q = query(collection(db, "users"), where("id", "==", authorId))
+
+      const unsub = await onSnapshot(q, (querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          setAuthor(doc.data())
+        })
+      })
+
+      
+      return () => unsub()
+    }
+
+    useEffect(() => {
+      getUserLikes()
+    })
+
+
+    useEffect(() => {
+      if (commentData) {
+          getAuthorData(commentData[0].author_id)
+          const createDate = formatDistanceToNow(commentData[0].createdAt.toDate(), { includeSeconds: true, addSuffix: true})
+          setCreationDate(createDate)
+      }
+    })
+
+    const MoveToSparkle = async() => {
+        navigate(`/sparkle/${params.sparkleId}`)
+    }
+
+    const MoveToHome = async() => {
+        navigate("/home")
+    }
+
+    const LikeThought = async() => {
+        if (!isLiked) {
+            const thoughtRef = doc(db, "comments", params.id);
+
+// Set the "capital" field of the city 'DC'
+            await updateDoc(thoughtRef, {
+            likes: increment(1)
+            });
+            const auth = getAuth(app)
+            const userdata = auth.currentUser
+            const userRef = doc(db, "users", userdata.uid);
+
+// Atomically add a new region to the "regions" array field.
+            await updateDoc(userRef, {
+                liked: arrayUnion(params.id)
+            });
+
+
+        }
+
+        else {
+            const thoughtRef = doc(db, "comments", params.id);
+
+            // Set the "capital" field of the city 'DC'
+            await updateDoc(thoughtRef, {
+                likes: increment(-1)
+            });
+            const auth = getAuth(app)
+            const userdata = auth.currentUser
+            const userRef = doc(db, "users", userdata.uid);
+            
+            // Atomically add a new region to the "regions" array field.
+            await updateDoc(userRef, {
+                liked: arrayRemove(params.id)
+            });
+        }
+        getUserLikes()
+    }
+
+    const MoveToUser = async() => {
+        if (author.id === user.uid) {
+            navigate("/profile")
+        }
+        else {
+            navigate(`/${author.id}`)
+        }
+    }
+
+    function formatNumber(count) {
+      if (count < 1000) {
+        return count.toString();
+      } else if (count < 1000000) {
+        return (count / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+      } else if (count < 1000000000) {
+        return (count / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+      } else {
+        return (count / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
+      }
+    }
+
+    const getComment = async() => {
+        const q = query(collection(db, "comments"), where("id", "==", params.id))
+
+        const unsub = await onSnapshot(q, (snapshot) => {
+          snapshot.forEach((doc) => {
+            setCommentData(doc.data())
+          })
+        })
+        
+        if (commentData) {
+            setReplies(commentData.comments)
+        }
+
+        return () => unsub()
+      }
+    
+    const ReplyToComment = async(comment) => {
+      setComment(true)
+      setCommentType("reply")
+      const commentRef = doc(db, "comments", comment)
+      const docSnap =  await getDoc(commentRef)
+      await setCommentData(docSnap.data())
+      const authorRef = doc(db, "users", commentData.author)
+      const docSnap2 = await getDoc(authorRef)
+      await setReplyAuthor(docSnap2.data())
+      console.log(replyAuthor)
+
+    }
+
     return (
         <main className="bg-black flex flex-col h-screen w-screen text-white gap-2 items-center justify-center p-4">
-            <header className="w-full flex items-center justify-between">
-                <ArrowLeft/>
-                <h1 className="text-xl">Comment</h1>
-                <Home/>
+            <header className="w-full flex items-center justify-between md:w-[500px]">
+                <ArrowLeft className="md:size-7"/>
+                <h1 className="text-xl md:text-2xl font-bold">Comment</h1>
+                <Home className="md:size-7"/>
             </header>
-            <hr className="border-neutral-500 w-full"/>
-            <div className="w-full flex items-center justify-between">
-                <div className="w-full flex">
+            <hr className="border-neutral-800 w-full md:w-[500px]"/>
+            <div className="w-full flex items-center justify-between md:w-[500px]">
+                <div className="w-full flex items-center gap-2">
                     <img src="" alt="" />
-                    <h1 className="text-lg">Author Name</h1>
-                    <Pin/>
-                    <PinOff/>
+                    <h1 className="text-lg md:text-xl">Author Name</h1>
+                    <Pin className="md:size-7"/>
+                    <PinOff className="md:size-7"/>
                 </div>
-                <h1 className="text-lg">Date</h1>
+                <h1 className="text-lg md:text-xl text-neutral-500">Date</h1>
             </div>
-            <div className="w-full mt-4">
-                <h1 className="w-96 text-lg">Content</h1>
-                <div className="w-full flex justify-between mt-4">
+            <div className="w-full mt-4 md:w-[500px]">
+                <h1 className="w-96 text-lg md:text-xl">Content</h1>
+                <hr className="border-neutral-800 w-full mt-4 mb-2"/>
+                <div className="w-full flex justify-between">
                     <div className="flex gap-2 items-center">
-                        <Heart/>
-                        <h1 className="text-xl">0</h1>
+                        <Heart className="md:size-7"/>
+                        <h1 className="text-xl md:text-2xl">0</h1>
                     </div>
                     <div className="flex gap-2 items-center">
-                    <Pin/>
-                    <PinOff/>
-                    <h1 className="text-xl">0</h1>
+                    <Pin className="md:size-7"/>
+                    <PinOff className="md:size-7"/>
+                    <h1 className="text-xl md:text-2xl">0</h1>
                     </div>
                     <div className="flex gap-2 items-center">
-                    <MessageSquare/>
-                    <h1 className="text-xl">0</h1>
+                    <MessageSquare className="md:size-18"/>
+                    <h1 className="text-xl md:text-2xl">0</h1>
                     </div>
                 </div>
             </div>
-            <hr className="border-neutral-500 w-full"/>
-            <div className="w-full h-full">
-                <h1 className="w-full text-2xl text-center">Replies</h1>
-                <ul></ul>
+            <hr className="border-neutral-800 w-full md:w-[500px]"/>
+            <div className="w-full h-full md:w-[500px]">
+                <h1 className="w-full text-2xl text-center md:text-3xl mb-2">Replies</h1>
+                { replies && replies.length != 0 ? (
+                    <ul></ul>
+                ) : (
+                    <div className="w-full flex border h-[500px] rounded-lg border-neutral-800 items-center justify-center">
+                        <h1 className="text-2xl md:text-3xl text-neutral-500">No replies yet.</h1>
+                    </div>
+                )}
             </div>
         </main>
     )

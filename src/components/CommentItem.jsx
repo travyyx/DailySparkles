@@ -2,11 +2,9 @@
 /* eslint-disable react/prop-types */
 import { formatDistanceToNow } from "date-fns";
 import {useState, useReducer, useEffect } from 'react'
-import { CommentModal } from './CommentModal'
 import { Heart, MessageSquare, Pin, PinOff } from "lucide-react"
 import { db, app } from '../config'
 import { doc, getDoc, query, where, collection, onSnapshot, increment, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore'
-import useRunOnce from '../useRunOnce'
 import { getAuth } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 
@@ -72,11 +70,11 @@ function CommentItem({commentId, ReplyTo, sparkleId,sparkleAuthor}) {
     setAuthorData(docSnap.data())
   }
 
-  useRunOnce({
-    fn: () => {
-        getCommentData()
-    }
-});
+
+
+useEffect(() => {
+  getCommentData()
+})
 
 useEffect(() => {
   getLikedState()
