@@ -284,13 +284,13 @@ function UserThought() {
                 <button className="w-auto bg-neutral-900 rounded-full p-2 hover:text-green-500 transition-all duration-200"  onClick={copyLink}><Share/></button>
             </div>
             <hr className="border-neutral-500/30 w-full mt-4"/>
-            <h1 className="w-full p-4 text-2xl text-center">Comments.</h1>
+            <h1 className="max-sm:text-lg w-full p-4 text-2xl text-center">Comments.</h1>
             { comments && comments.length === 0 ? (
                               <div className='w-full flex items-center justify-center border-neutral-900 border-2 rounded-md mt-4 h-full mb-2'>
                               <h1 className='text-2xl text-neutral-600 text-center'>No comments yet.</h1>
                           </div>
             ) : (
-              <ul className="w-full h-[430px] gap-3 flex flex-col overflow-auto [&::-webkit-scrollbar]:w-0">
+              <ul className="w-full max-sm:h-[350px] h-[430px] gap-3 flex flex-col overflow-auto [&::-webkit-scrollbar]:w-0">
                 { comments.map((comment) => {
                 return (<CommentItem key={comment} commentId={comment} ReplyTo={() => ReplyToComment(comment)} sparkleId={params.id} sparkleAuthor={author && author.id}/>)
                 })}

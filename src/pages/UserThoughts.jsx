@@ -120,7 +120,7 @@ const MoveToHome = async() => {
           <div className='flex flex-col gap-2 mt-5 items-center'>
             <h1 className='text-2xl'>Thoughts: {thoughts ? thoughts.length : "0"}</h1>
             { thoughts.length === 0  ? (<></>) :  
-        <ul className="w-[30rem] md:w-[600px] h-[500px] overflow-auto [&::-webkit-scrollbar]:w-0">
+        <ul className="w-[20rem] md:w-[600px] h-[500px] overflow-auto [&::-webkit-scrollbar]:w-0">
             {thoughts && (
               thoughts.map((thought) => {
                 return (

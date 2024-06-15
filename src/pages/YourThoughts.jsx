@@ -256,7 +256,7 @@ setError(true)
   }
 
     return (
-    <main className="bg-black flex flex-col h-screen w-screen text-white gap-2 items-center justify-center">
+    <main className="bg-black flex flex-col h-full w-screen text-white gap-2 items-center justify-center">
                   { !loading ? (<><header className='w-full flex p-2 items-center justify-between mt-2'>
             { thoughts && <h1 className='text-2xl ml-2'>Sparkles: {thoughts.length}</h1>}
             <div className='flex gap-6'>
@@ -269,13 +269,13 @@ setError(true)
                 {
                   open &&
                   <>                  
-                  <h1 className='mb-4 text-2xl mt-4 md:text-3xl'>Say what do you think.</h1>
-                <form className='flex flex-col justify-center items-center gap-3 mt-4' onSubmit={handleSubmit(PostThought)}>
+                  <h1 className=' text-2xl mt-2 md:text-3xl'>Say what do you think.</h1>
+                <form className='flex flex-col justify-center items-center gap-3 mt-4 w-full p-2' onSubmit={handleSubmit(PostThought)}>
                 <label htmlFor="title" className="text-xl w-full">Sparkle Title.</label>
-                <input type="text" id="title" placeholder="My thought." {...register("title", {required: true})} className="border-neutral-900 p-1 rounded text-white placeholder:text-neutral-500 caret-neutral-500 text-xl w-full bg-transparent border-2"/>
+                <input type="text" id="title" placeholder="My thought." {...register("title", {required: true})} className="border-neutral-900 p-1 rounded text-white placeholder:text-neutral-500 caret-neutral-500 text-xl w-full bg-transparent border-2 max-sm:text-sm"/>
                 { errors.title?.type === "required" ? <h1 className='w-full text-red-500'>This field is required.</h1> : <></>}
                 <label htmlFor="content" className="text-xl w-full">Sparkle Content.</label>
-                    <textarea name="" id="content" className="border-neutral-900 p-2 rounded text-white placeholder:text-neutral-500 caret-neutral-500 text-xl resize-none w-[400px] h-[200px] [&::-webkit-scrollbar]:w-0 border-2 bg-transparent" placeholder='Hello.' {...register("content", {required: true, maxLength: 200})}></textarea>
+                    <textarea name="" id="content" className="border-neutral-900 p-2 rounded text-white placeholder:text-neutral-500 caret-neutral-500 text-xl resize-none w-full h-[200px] [&::-webkit-scrollbar]:w-0 border-2 bg-transparent" placeholder='Hello.' {...register("content", {required: true, maxLength: 200})}></textarea>
                     <div className='flex w-full items-center justify-center gap-2'>
                     {textContent && (<><progress className={textContent && textContent.length > 190 ? 'w-full [&::-webkit-progress-bar]:bg-neutral-900 [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-value]:bg-red-500 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]:duration-200' : 'w-full [&::-webkit-progress-bar]:bg-neutral-900 [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-value]:bg-blue-500 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]:duration-200'} value={textContent.length} max={200}></progress>
                       <h1>{textContent ? textContent.length : "0"}/200</h1></>)}
@@ -298,7 +298,7 @@ setError(true)
                 {!open && <h1 className='mt-8 mb-3 text-2xl'>Your Sparkles.</h1>}
                 { !open && thoughts.length === 0 && <h1>You don&apos;t have any Sparkles.</h1>}
         { thoughts.length === 0 || open ? (<></>) :  
-        <ul className="w-[30rem] md:w-[600px] h-[500px] overflow-auto [&::-webkit-scrollbar]:w-0">
+        <ul className="w-[20rem] md:w-[600px] h-[500px] overflow-auto [&::-webkit-scrollbar]:w-0">
             {thoughts && (
               thoughts.map((thought) => {
                 return (

@@ -191,7 +191,7 @@ function OpenComment() {
         <h1 className='text-xl cursor-pointer hover:underline' tabIndex={0} onClick={MoveToUser}>{authorData && authorData.name}</h1>
         { user && authorData && user.uid == authorData.id && commentData && commentData.isPinned &&(<Pin className=" text-blue-500 fill-blue-500" size={24} fill="currentFill"/>)}
         </div>
-        <h1 className='text-lg text-neutral-500 w-full text-right'>{state.postDate}</h1>
+        <h1 className=' text-neutral-500 w-full text-right'>{state.postDate}</h1>
       </div>
       <div>
         <h1 className='text-xl my-4 hover:underline cursor-pointer' onClick={OpenComment}>{commentData && commentData.content}</h1>
