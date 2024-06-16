@@ -256,7 +256,7 @@ setError(true)
   }
 
     return (
-    <main className="bg-black flex flex-col max-sm:h-full w-screen text-white gap-2 items-center justify-center h-screen">
+    <main className="bg-black flex flex-col w-screen text-white gap-2 items-center justify-center h-screen">
                   { !loading ? (<><header className='w-full flex p-2 items-center justify-between mt-2'>
             { thoughts && <h1 className='text-2xl ml-2'>Sparkles: {thoughts.length}</h1>}
             <div className='flex gap-6'>
@@ -298,7 +298,7 @@ setError(true)
                 {!open && <h1 className='mt-8 mb-3 text-2xl'>Your Sparkles.</h1>}
                 { !open && thoughts.length === 0 && <h1>You don&apos;t have any Sparkles.</h1>}
         { thoughts.length === 0 || open ? (<></>) :  
-        <ul className="w-[20rem] md:w-[600px] h-[500px] overflow-auto [&::-webkit-scrollbar]:w-0">
+        <ul className="w-[25rem] md:w-[600px] h-[500px] overflow-auto [&::-webkit-scrollbar]:w-0">
             {thoughts && (
               thoughts.map((thought) => {
                 return (

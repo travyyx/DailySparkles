@@ -1,22 +1,26 @@
 /* eslint-disable no-unused-vars */
 import { Cloudy, Search, UserRoundX, TrendingUp, Telescope, Sparkles } from "lucide-react"
 import HomeThoughtItem from "../components/HomeThoughtItem"
+import { EditModal } from '../components/EditProfileModal'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getAuth } from 'firebase/auth'
 import  { app, db } from '../config'
 import { query, collection, orderBy, getDocs, doc, getDoc, where } from 'firebase/firestore'
 import TopicsItem from "../components/TopicsItem"
+import useRunOnce from './../useRunOnce';
 
 function HomePage() {
     const [user, setUser] = useState(null)
     const [thoughts, setThoughts] = useState([])
     const [followingThoughts, setFollowingThoughts] = useState([])
+    const [ edit, setEdit ] = useState(false)
     const [topics, setTopics] = useState([])
     const [trending, setTrending] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
     const [ viewType, setViewType ] = useState(0)
+    const [followingMode, setFollowingMode] = useState(0)
     const navigate = useNavigate()
     const auth = getAuth()
 
@@ -153,6 +157,18 @@ function HomePage() {
                 setLoading(false)
       }
 
+      useRunOnce({
+        fn: () => {
+          const newUser = window.localStorage.getItem("new")
+            if (newUser === "false") {
+              setEdit(true)
+              window.localStorage.setItem("new", "true")
+            } else {
+              setEdit(false)
+            }
+        }
+    });
+
 
     return (
         <main className="bg-black flex flex-col h-screen w-screen text-white gap-2 items-center justify-center border-x-2 border-neutral-900">
@@ -250,6 +266,10 @@ function HomePage() {
           </div>
           </>
            )}
+          { edit && <EditModal onClose={() => {
+            setEdit(false)
+            window.localStorage.setItem("new", "false")
+          }}/>}
         </main>
     )
 }

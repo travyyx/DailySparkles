@@ -34,6 +34,7 @@ function App() {
       await signInWithPopup(auth, provider)
       CreateUser()
       navigate("/home")
+      window.localStorage.setItem("new", "false")
     } catch (error) {
 alert("An error occured: " + error.message)
     }

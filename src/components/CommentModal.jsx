@@ -30,14 +30,27 @@ export function CommentModal({onClose, type, SparkleName, commentId, authorName}
               likes: 0,
               replies: [],
               id: id,
-              creationDate: serverTimestamp()
+              creationDate: serverTimestamp(),
+              isPinned: false,
+              isReply: false,
+              parent: null
             });
             const thoughtRef = doc(db, "thoughts", SparkleName)
             await updateDoc(thoughtRef, {
               comments: arrayUnion(id)
             })
         } else {
-          console.log(commentId)
+          await setDoc(doc(db, "comments", id), {
+            content: data.comment,
+            author: user.uid,
+            likes: 0,
+            replies: [],
+            id: id,
+            creationDate: serverTimestamp(),
+            isPinned: false,
+            isReply: true,
+            parent: commentId
+          });
           const commentRef = doc(db, "comments", commentId)
           await updateDoc(commentRef, {
             replies: arrayUnion(id)

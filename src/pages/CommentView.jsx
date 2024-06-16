@@ -1,11 +1,11 @@
-import { ArrowLeft, Heart, Home, MessageSquare, Pin, PinOff } from "lucide-react";
+import { ArrowLeft, Heart, Home, MessageSquare, Pin, PinOff, Trash2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { CommentModal } from './../components/CommentModal';
 import CommentItem from './../components/CommentItem';
 import { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
 import { app, db } from "../config";
-import { query, where, onSnapshot, collection, doc, updateDoc, arrayRemove, arrayUnion, increment, getDoc } from "firebase/firestore";
+import { query, where, onSnapshot, collection, doc, updateDoc, arrayRemove, arrayUnion, increment, getDoc, deleteDoc } from "firebase/firestore";
 import { formatDistanceToNow } from "date-fns";
 
 export function CommentView() {
@@ -83,7 +83,6 @@ export function CommentView() {
     useEffect(() => {
       if (commentData) {
           getAuthorData(commentData.author)
-          console.log(commentData.creationDate)
           const createDate = formatDistanceToNow(commentData.creationDate.toDate(), { includeSeconds: true, addSuffix: true})
           setCreationDate(createDate)
       }
@@ -186,23 +185,79 @@ export function CommentView() {
       const authorRef = doc(db, "users", commentData.author)
       const docSnap2 = await getDoc(authorRef)
       await setReplyAuthor(docSnap2.data())
-      console.log(replyAuthor)
 
     }
+
+    const SetCommentPinState = async() => {
+      const commentRef= doc(db, "comments", params.id)
+    
+      await updateDoc(commentRef, {
+        isPinned: commentData && !commentData.isPinned
+      })
+      getComment()
+    }
+
+    const DeleteComment = async() => {
+      const deleteConfirm = confirm("Are you to delete this comment?")
+      if (deleteConfirm) {
+        if (isLiked) {
+          const thoughtRef = doc(db, "comments", params.id);
+  
+          // Set the "capital" field of the city 'DC'
+          await updateDoc(thoughtRef, {
+              likes: increment(-1)
+          });
+          const auth = getAuth(app)
+          const userdata = auth.currentUser
+          const userRef = doc(db, "users", userdata.uid);
+          
+          // Atomically add a new region to the "regions" array field.
+          await updateDoc(userRef, {
+              liked: arrayRemove(params.id)
+          });
+        } else {
+          const thoughtRef = doc(db, "comments", params.id);
+          const docSnap = await getDoc(thoughtRef)
+  
+          if (docSnap.data().isReply) {
+            const parentCommentRef = doc(db, "comments", docSnap.data().parent)
+            await updateDoc(parentCommentRef, {
+              replies: arrayRemove(params.id)
+            })
+          }
+  
+          else {
+            const postRef = doc(db, "thoughts", params.sparkleId)
+            await updateDoc(postRef, {
+              comments: arrayRemove(params.id)
+            })
+          }
+
+          const commentRef = doc(db, "comments", params.id);
+          await deleteDoc(commentRef)
+          navigate(`/sparkle/${params.sparkleId}`)
+
+        }
+      } else {
+        return
+      }
+
+
+  }
 
     return (
         <main className="bg-black flex flex-col h-screen w-screen text-white gap-2 items-center justify-center p-4">
             <header className="w-full flex items-center justify-between md:w-[500px] mt-2">
-                <ArrowLeft className="md:size-9 size-7"/>
+                <ArrowLeft className="md:size-9 size-7 hover:text-blue-500 transition-all duration-200 cursor-pointer" onClick={MoveToSparkle}/>
                 <h1 className="text-xl md:text-2xl font-bold">Comment</h1>
-                <Home className="md:size-9 size-7"/>
+                <Home className="md:size-9 size-7 hover:text-blue-500 transition-all duration-200 cursor-pointer" onClick={MoveToHome}/>
             </header>
             <hr className="border-neutral-800 w-full md:w-[500px]"/>
             <div className="w-full flex items-center justify-between md:w-[500px]">
                 <div className="w-full flex items-center gap-2">
-                    <img src={author && author.photoURL} alt="" width={48} height={48} className="rounded-full"/>
-                    <h1 className="text-lg md:text-xl">{author && author.name}</h1>
-                    { commentData && commentData.isPinned && (<Pin className="md:size-7"/>)}
+                    <img src={author && author.photoURL} alt="Profile picture" width={48} height={48} className="rounded-full"/>
+                    <h1 className="text-lg md:text-xl cursor-pointer hover:underline" onClick={MoveToUser}>{author && author.name}</h1>
+                    { commentData && commentData.isPinned && (<Pin className="md:size-7 text-blue-600 fill-blue-600"/>)}
                 </div>
                 <h1 className="text-lg md:text-xl text-neutral-500 w-full text-right">{creationDate && creationDate}</h1>
             </div>
@@ -211,17 +266,22 @@ export function CommentView() {
                 <hr className="border-neutral-800 w-full mt-4 mb-2"/>
                 <div className="w-full flex justify-between">
                     <div className="flex gap-2 items-center">
-                        <Heart className="md:size-7"/>
-                        <h1 className="text-xl md:text-2xl">0</h1>
+                        <Heart className={ isLiked ? "cursor-pointer md:size-7 text-red-700" : "cursor-pointer md:size-7 fill-white"} fill={isLiked  ? "#b91c1c" : "#ffffff"} onClick={LikeThought}/>
+                        <h1 className="text-xl md:text-2xl">{commentData && formatNumber(commentData.likes)}</h1>
                     </div>
                     <div className="flex gap-2 items-center">
-                    { commentData && commentData.isPinned && author && author.uid === user.uid ? (<Pin className="md:size-7"/>) :(
-                    <PinOff className="md:size-7"/>
+                    <MessageSquare className="md:size-18 hover:text-green-600 transition-all duration-200 cursor-pointer" onClick={ReplyToComment}/>
+                    <h1 className="text-xl md:text-2xl">{commentData && formatNumber(commentData.replies.length)}</h1>
+                    </div>
+                    <div className="flex gap-2 items-center">
+                    { commentData && author && author.id === user.uid && (
+                      commentData.isPinned ? (
+                        <PinOff className="md:size-7 hover:text-red-600 transition-all duration-200 cursor-pointer" onClick={SetCommentPinState}/>
+                      ) :(
+                        <Pin className="md:size-7 hover:text-blue-600 duration-200 transition-all cursor-pointer" onClick={SetCommentPinState}/>
+                      )
                     )}
-                    </div>
-                    <div className="flex gap-2 items-center">
-                    <MessageSquare className="md:size-18"/>
-                    <h1 className="text-xl md:text-2xl">0</h1>
+                    <Trash2 className="md:size-9 size-7 ml-2 hover:text-red-600 transition-all duration-200 cursor-pointer" onClick={DeleteComment}/>
                     </div>
                 </div>
             </div>
