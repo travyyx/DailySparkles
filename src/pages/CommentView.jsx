@@ -9,6 +9,7 @@ import { query, where, onSnapshot, collection, doc, updateDoc, arrayRemove, arra
 import { formatDistanceToNow } from "date-fns";
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import useRunOnce from "../useRunOnce";
 
 export function CommentView() {
     const navigate = useNavigate();
@@ -77,13 +78,16 @@ export function CommentView() {
       return () => unsub()
     }
 
-    useEffect(() => {
-      getUserLikes()
-    }, [loading])
-
-
+    useRunOnce({
+      fn: () => {
+        getComment()
+      }
+    });
+    
+    
     useEffect(() => {
       if (commentData) {
+          getUserLikes()
           getAuthorData(commentData.author)
           const createDate = formatDistanceToNow(commentData.creationDate.toDate(), { includeSeconds: true, addSuffix: true})
           setCreationDate(createDate)
@@ -164,29 +168,24 @@ export function CommentView() {
         const unsub = await onSnapshot(q, (snapshot) => {
           snapshot.forEach((doc) => {
             setCommentData(doc.data())
+            setReplies(doc.data().replies)
           })
         })
         
-        if (commentData) {
-            setReplies(commentData.comments)
-        }
 
         return () => unsub()
       }
 
-      useEffect(() => {
-        getComment()
-      }, [loading])
     
-    const ReplyToComment = async(comment) => {
+    const ReplyToComment = async() => {
       setComment(true)
       setCommentType("reply")
-      const commentRef = doc(db, "comments", comment)
+      const commentRef = doc(db, "comments", params.id)
       const docSnap =  await getDoc(commentRef)
-      await setCommentData(docSnap.data())
+      setCommentData(docSnap.data())
       const authorRef = doc(db, "users", commentData.author)
       const docSnap2 = await getDoc(authorRef)
-      await setReplyAuthor(docSnap2.data())
+      setReplyAuthor(docSnap2.data())
 
     }
 
@@ -200,6 +199,7 @@ export function CommentView() {
     }
 
     const DeleteComment = async() => {
+      const sparkleName = window.sessionStorage.getItem("sparkle_name")
       const deleteConfirm = confirm("Are you to delete this comment?")
       if (deleteConfirm) {
         if (isLiked) {
@@ -217,29 +217,47 @@ export function CommentView() {
           await updateDoc(userRef, {
               liked: arrayRemove(params.id)
           });
-        } else {
-          const thoughtRef = doc(db, "comments", params.id);
-          const docSnap = await getDoc(thoughtRef)
-  
-          if (docSnap.data().isReply) {
-            const parentCommentRef = doc(db, "comments", docSnap.data().parent)
-            await updateDoc(parentCommentRef, {
-              replies: arrayRemove(params.id)
-            })
-          }
-  
-          else {
-            const postRef = doc(db, "thoughts", params.sparkleId)
-            await updateDoc(postRef, {
-              comments: arrayRemove(params.id)
-            })
-          }
 
           const commentRef = doc(db, "comments", params.id);
+          const docSnap = await getDoc(commentRef)
+  
+          if (docSnap.data() && !docSnap.data().replies) {
+            return
+          } else {
+            docSnap.data().replies.forEach((reply) => {
+              const replyRef = doc(db, "comments", reply);
+              deleteDoc(replyRef)
+            })
+          }
+          const sparkleRef = doc(db, "thoughts", sparkleName)
+          await updateDoc(sparkleRef, {
+            comments: arrayRemove(params.id)
+            })
+          window.sessionStorage.clear()
           await deleteDoc(commentRef)
           navigate(`/sparkle/${params.sparkleId}`)
 
+        } else {
+          const commentRef = doc(db, "comments", params.id);
+          const docSnap = await getDoc(commentRef)
+  
+          if (docSnap.data() && !docSnap.data().replies) {
+            return
+          } else {
+            docSnap.data().replies.forEach((reply) => {
+              const replyRef = doc(db, "comments", reply);
+              deleteDoc(replyRef)
+            })
+          }
+          const sparkleRef = doc(db, "thoughts", sparkleName)
+          await updateDoc(sparkleRef, {
+            comments: arrayRemove(params.id)
+            })
+          await deleteDoc(commentRef)
+          window.sessionStorage.clear()
+          navigate(`/sparkle/${params.sparkleId}`)
         }
+      
       } else {
         return
       }
@@ -296,7 +314,11 @@ export function CommentView() {
             <div className="w-full h-full md:w-[500px]">
                 <h1 className="w-full text-2xl text-center md:text-3xl mb-2">Replies</h1>
                 { replies && replies.length != 0 ? (
-                    <ul></ul>
+                    <ul className="w-full h-[430px] gap-3 flex flex-col overflow-auto [&::-webkit-scrollbar]:w-0">
+                  { replies.map((reply) => {
+                return (<CommentItem key={reply} commentId={reply} ReplyTo={null} sparkleId={params.sparkleId} sparkleAuthor={author && author.id}/>)
+                })}
+                    </ul>
                 ) : (
                     <div className="w-full flex border h-[470px] rounded-lg border-neutral-800 items-center justify-center">
                         <h1 className="text-2xl md:text-3xl text-neutral-500">No replies yet.</h1>

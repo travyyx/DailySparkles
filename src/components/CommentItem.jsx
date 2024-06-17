@@ -2,9 +2,9 @@
 /* eslint-disable react/prop-types */
 import { formatDistanceToNow } from "date-fns";
 import {useState, useReducer, useEffect } from 'react'
-import { Heart, MessageSquare, Pin, PinOff } from "lucide-react"
+import { Heart, MessageSquare, Pin, PinOff, Trash } from "lucide-react"
 import { db, app } from '../config'
-import { doc, getDoc, query, where, collection, onSnapshot, increment, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore'
+import { doc, getDoc, query, where, collection, onSnapshot, increment, updateDoc, arrayUnion, arrayRemove, deleteDoc } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 import Markdown from 'react-markdown'
@@ -24,7 +24,7 @@ const reducer = (state, action) => {
   }
 };
 
-function CommentItem({commentId, ReplyTo, sparkleId,sparkleAuthor}) {
+function CommentItem({commentId, ReplyTo, sparkleId,sparkleAuthor, sparkleName}) {
   const [user, setUser] = useState(null)
   const [commentData, setCommentData] = useState(null)
   const [comment, setComment] = useState(false)
@@ -180,7 +180,31 @@ function formatNumber(count) {
 }
 
 function OpenComment() {
+  window.sessionStorage.setItem("sparkle_name", sparkleName && sparkleName)
   navigate(`/sparkle/${sparkleId}/comment/${commentId}`)
+}
+
+const deleteReply = async() => {
+  const deleteConfirm = confirm("Do you want to delete this reply ?")
+
+  if (deleteConfirm) {
+    const commentRef = doc(db, "comments", commentData.parent)
+    await updateDoc(commentRef, {
+      replies: arrayRemove(commentId)
+    })
+    const userRef = doc(db, "users", user.uid)
+    const docSnap = await getDoc(userRef)
+
+    if (docSnap.liked.includes(commentId)) {
+      await updateDoc(userRef, {
+        liked: arrayRemove(commentId)
+        })
+    }
+    const replyRef = doc(db, "comments", commentId)
+    await deleteDoc(replyRef)
+  } else {
+    return
+  }
 }
 
   return (
@@ -209,12 +233,15 @@ function OpenComment() {
           <h1 className="text-lg md:text-xl">{likes && formatNumber(likes)}</h1>
           </div>
           <div className='flex gap-2 items-center'>
-            <button>                  
+            { commentData && !commentData.isReply ? (<><button>                  
               <MessageSquare className=" cursor-pointer hover:text-green-500 transition-colors duration-200"  onClick={OpenComment}/>
               </button>
-            <h1 className="text-lg md:text-xl">{commentData && formatNumber(commentData.replies.length)}</h1>
+            <h1 className="text-lg md:text-xl">{commentData && formatNumber(commentData.replies.length)}</h1></>
+          ) : (
+            <Trash className="hover:text-red-500 transition-colors duration-200 cursor-pointer" onClick={deleteReply}/>
+          )}
           </div>
-          { user && authorData && user.uid === authorData.id && sparkleAuthor === user.uid && (
+          { user && authorData && user.uid === authorData.id && sparkleAuthor === user.uid && !commentData.isReply && (
             commentData && commentData.isPinned ? (
               <button><PinOff className="hover:text-red-500 transition-colors duration-200 cursor-pointer" onClick={SetCommentPinState}/></button>
              ) : (<button><Pin className="hover:text-blue-500 transition-colors duration-200 cursor-pointer" onClick={SetCommentPinState}/></button>)

@@ -44,7 +44,6 @@ export function CommentModal({onClose, type, SparkleName, commentId, authorName}
             content: data.comment,
             author: user.uid,
             likes: 0,
-            replies: [],
             id: id,
             creationDate: serverTimestamp(),
             isPinned: false,

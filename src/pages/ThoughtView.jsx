@@ -293,7 +293,7 @@ function UserThought() {
             ) : (
               <ul className="w-full h-[400px] gap-3 flex flex-col overflow-auto [&::-webkit-scrollbar]:w-0">
                 { comments.map((comment) => {
-                return (<CommentItem key={comment} commentId={comment} ReplyTo={() => ReplyToComment(comment)} sparkleId={params.id} sparkleAuthor={author && author.id}/>)
+                return (<CommentItem key={comment} commentId={comment} ReplyTo={() => ReplyToComment(comment)} sparkleId={params.id} sparkleAuthor={author && author.id} sparkleName={thought && thought[0].title}/>)
                 })}
               </ul>
             )}
