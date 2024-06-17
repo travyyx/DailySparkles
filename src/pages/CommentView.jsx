@@ -303,6 +303,7 @@ export function CommentView() {
                     </div>
                 )}
             </div>
+            { comment && commentType === "reply" && (<CommentModal onClose={() => setComment(false)} type={"reply"} commentId={commentData && commentData.id} authorName={replyAuthor && replyAuthor.name}/>)}
         </main>
     )
 }
