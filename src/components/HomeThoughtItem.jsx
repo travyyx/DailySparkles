@@ -6,6 +6,10 @@ import { query, collection, onSnapshot, where, increment, doc, updateDoc, arrayU
 import { Heart } from 'lucide-react'
 import { getAuth } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+
+
 /* eslint-disable react/prop-types */
 
 const initialState = {
@@ -161,8 +165,14 @@ function HomeThoughtItem({thought, content, title, author}) {
             </div>
             <hr className="w-full border-neutral-800"/>
             <div className="flex flex-col gap-2 text-wrap truncate w-full">
-            <h1 className="text-xl truncate">{title}</h1>
-            <h1 className="text-md hover:underline"  onClick={MoveToSparkle} tabIndex={0}>{content}</h1>
+            <h1 className="text-xl truncate hover:underline" onClick={MoveToSparkle}>{title}</h1>
+            <Markdown className="text-md" remarkPlugins={[remarkGfm]} components={{
+              a(props) {
+                const {node, ...rest} = props
+                return <a className="text-blue-500 hover:underline" href={rest.href} target="_blank">{rest.href}</a>
+              }
+            }}>{content}</Markdown>
+
             </div>
             <div className="w-full flex gap-2 items-center justify-end">
             <Heart className={ liked ? "cursor-pointer md:size-7 text-red-700" : "cursor-pointer md:size-7 transition-all"} fill={liked ? "#b91c1c" : "#ffffff"} onClick={LikeThought} tabIndex={0}/>

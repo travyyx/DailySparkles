@@ -6,6 +6,8 @@ import { Search, Home,CircleUserRound } from 'lucide-react'
 import { where, query, collection, onSnapshot, doc, getDoc, arrayUnion, arrayRemove, updateDoc } from 'firebase/firestore'
 import FollowersList from '../components/user/FollowersList'
 import FollowingList from '../components/user/FollowingList'
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 
 function UserThoughts() {
@@ -180,8 +182,13 @@ setError(true)
         
           <img src={userData[0] ? userData[0].photoURL : ""} alt="Profile picture." className='rounded-full md:size-24' />
         <h1 className="text-3xl font-semibold md:text-4xl">{userData[0] ? userData[0].name : "Guest"}</h1>
-        <h1 className='text-neutral-400 text-clip text-center w-64 text-2xl'>{bio ? bio : "No bio yet."}</h1>
                 </div>
+                <Markdown className='text-neutral-400 text-clip text-center w-64 text-2xl' remarkPlugins={[remarkGfm]} components={{
+              a(props) {
+                const {node, ...rest} = props
+                return <a className="text-blue-500 " href={rest.href} target="_blank">{rest.href}</a>
+              }
+            }}>{bio ? bio : "No bio yet."}</Markdown>
 
         <div className='flex gap-8 w-full items-center justify-center mt-4 text-neutral-500 md:gap-10'>
         { thoughts && <h1 className='text-xl mt-3 md:text-2xl cursor-pointer hover:underline' onClick={MoveToThoughts}>{thoughts.length} Sparkles</h1>}

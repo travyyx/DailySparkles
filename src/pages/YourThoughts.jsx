@@ -272,7 +272,7 @@ setError(true)
                   <h1 className=' text-2xl mt-2 md:text-3xl'>Say what do you think.</h1>
                 <form className='flex flex-col justify-center items-center gap-3 mt-4 max-sm:w-full w-[500px] p-2' onSubmit={handleSubmit(PostThought)}>
                 <label htmlFor="title" className="text-xl w-full">Sparkle Title.</label>
-                <input type="text" id="title" placeholder="My thought." {...register("title", {required: true})} className="border-neutral-900 p-1 rounded text-white placeholder:text-neutral-500 caret-neutral-500 text-xl w-full bg-transparent border-2 max-sm:text-sm"/>
+                <input type="text" id="title" placeholder="My thought." {...register("title", {required: true})} className="border-neutral-900 p-1 rounded text-white placeholder:text-neutral-500 caret-neutral-500 text-xl w-full bg-transparent border-2 max-sm:text-md"/>
                 { errors.title?.type === "required" ? <h1 className='w-full text-red-500'>This field is required.</h1> : <></>}
                 <label htmlFor="content" className="text-xl w-full">Sparkle Content.</label>
                     <textarea name="" id="content" className="border-neutral-900 p-2 rounded text-white placeholder:text-neutral-500 caret-neutral-500 text-xl resize-none w-full h-[200px] [&::-webkit-scrollbar]:w-0 border-2 bg-transparent" placeholder='Hello.' {...register("content", {required: true, maxLength: 200})}></textarea>
@@ -298,7 +298,7 @@ setError(true)
                 {!open && <h1 className='mt-8 mb-3 text-2xl'>Your Sparkles.</h1>}
                 { !open && thoughts.length === 0 && <h1>You don&apos;t have any Sparkles.</h1>}
         { thoughts.length === 0 || open ? (<></>) :  
-        <ul className="w-[25rem] md:w-[600px] h-[500px] overflow-auto [&::-webkit-scrollbar]:w-0">
+        <ul className="w-[27rem] md:w-[600px] h-[500px] overflow-auto [&::-webkit-scrollbar]:w-0">
             {thoughts && (
               thoughts.map((thought) => {
                 return (

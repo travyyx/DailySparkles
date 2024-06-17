@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 /* eslint-disable react/prop-types */
 function TopicsItem({name, icon, description}) {
@@ -14,7 +16,12 @@ function TopicsItem({name, icon, description}) {
                 <h1 className="md:text-xl text-lg">{name && name}</h1>
             </div>
             <hr className="w-full border-neutral-800"/>
-            <h1 className="text-lg hover:underline text-wrap mb-4 md:text-xl text-left w-full" onClick={MoveToTopic}>{description}</h1>
+            <Markdown className="text-lg hover:underline text-wrap mb-4 md:text-xl text-left w-full" remarkPlugins={[remarkGfm]} components={{
+              a(props) {
+                const {node, ...rest} = props
+                return <a className="text-blue-500 " href={rest.href} target="_blank">{rest.href}</a>
+              }
+            }} onClick={MoveToTopic}>{description}</Markdown>
         </div>
     )
 }

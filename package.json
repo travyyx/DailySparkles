@@ -24,6 +24,8 @@
     "react-easy-crop": "^5.0.7",
     "react-hook-form": "^7.51.4",
     "react-image-crop": "^11.0.5",
+    "react-markdown": "^9.0.1",
+    "remark-gfm": "^4.0.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

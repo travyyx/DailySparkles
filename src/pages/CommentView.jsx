@@ -7,6 +7,8 @@ import { getAuth } from "firebase/auth";
 import { app, db } from "../config";
 import { query, where, onSnapshot, collection, doc, updateDoc, arrayRemove, arrayUnion, increment, getDoc, deleteDoc } from "firebase/firestore";
 import { formatDistanceToNow } from "date-fns";
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 export function CommentView() {
     const navigate = useNavigate();
@@ -77,7 +79,7 @@ export function CommentView() {
 
     useEffect(() => {
       getUserLikes()
-    })
+    }, [loading])
 
 
     useEffect(() => {
@@ -174,7 +176,7 @@ export function CommentView() {
 
       useEffect(() => {
         getComment()
-      }, [])
+      }, [loading])
     
     const ReplyToComment = async(comment) => {
       setComment(true)
@@ -262,7 +264,12 @@ export function CommentView() {
                 <h1 className="text-lg md:text-xl text-neutral-500 w-full text-right">{creationDate && creationDate}</h1>
             </div>
             <div className="w-full mt-2 md:w-[500px]">
-                <h1 className="w-96 text-lg md:text-xl">{commentData && commentData.content}</h1>
+                <Markdown className="w-96 text-lg md:text-xl" remarkPlugins={[remarkGfm]} components={{
+              a(props) {
+                const {node, ...rest} = props
+                return <a className="text-blue-500 " href={rest.href} target="_blank">{rest.href}</a>
+              }
+            }}>{commentData && commentData.content}</Markdown>
                 <hr className="border-neutral-800 w-full mt-4 mb-2"/>
                 <div className="w-full flex justify-between">
                     <div className="flex gap-2 items-center">

@@ -7,6 +7,8 @@ import { query, collection, onSnapshot, where} from 'firebase/firestore'
 import { EditModal } from '../components/EditProfileModal'
 import FollowersList from '../components/FollowersList'
 import FollowingList from '../components/FollowingList'
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 function UserPage() {
     const [user, setUser] = useState(null)
@@ -128,16 +130,21 @@ setError(true)
             <div className='flex flex-col h-screen w-screen text-white gap-2 items-center justify-center'>
                 <div className='flex flex-col items-center justify-center gap-3'>
                   <div className='relative'>
-            <img src={user ? user.photoURL : ""} alt="Profile picture." className='rounded-full cursor-pointer md:size-24 hover:-translate-y-1 hover:scale-105 transition-all duration-200 peer' onClick={showEdit} title='Edit profile.'/>
+            <img src={user ? user.photoURL : ""} alt="Profile picture." className='rounded-full cursor-pointer md:size-24 hover:ring-2 transition-all duration-200 ring-neutral-800 hover:grayscale' onClick={showEdit} title='Edit profile.'/>
                     <div className='rounded-full bg-neutral-800 p-2 w-8 absolute -bottom-1 right-1 peer-hover:hidden'>
-                    <Pencil size={18} className='peer-hover:hidden'/>
+                    <Pencil size={18}/>
                     </div>
                   </div>
             <div className='w-full flex gap-2 items-center justify-center'>
         <h1 className="text-3xl font-semibold md:text-4xl">Welcome {user ? user.displayName : "Guest"}</h1>
         { verified && <BadgeCheck size={28}/>}
             </div>
-        <h1 className='text-neutral-400 text-clip text-center w-64 text-xl'>{bio ? bio : "No bio yet. Click on the image to add one."}</h1>
+        <Markdown className='text-neutral-400 text-clip text-center w-64 text-xl' remarkPlugins={[remarkGfm]} components={{
+              a(props) {
+                const {node, ...rest} = props
+                return <a className="text-blue-500 " href={rest.href} target="_blank">{rest.href}</a>
+              }
+            }}>{bio ? bio : "No bio yet. Click on the image to add one."}</Markdown>
                 </div>
         <div className='flex gap-8 w-full items-center justify-center mt-4 text-neutral-500 md:gap-10'>
         { thoughts && <h1 className='text-xl mt-3 md:text-2xl cursor-pointer hover:underline' onClick={() => navigate("/sparkles")}>{thoughts.length} {thoughts.length === 1 ? "Sparkle" : "Sparkles"}</h1>}

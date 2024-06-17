@@ -11,6 +11,9 @@ import { AlertItem } from '../components/AlertItem'
 import { formatDistanceToNow } from "date-fns";
 import CommentItem from "../components/CommentItem"
 import { CommentModal } from "../components/CommentModal"
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import useRunOnce from "../useRunOnce"
 
 function UserThought() {
     const [user, setUser] = useState(null)
@@ -39,6 +42,9 @@ function UserThought() {
         const unsubscribe = auth.onAuthStateChanged((user) => {
           if (user) {
             setUser(user)
+            getComments()
+            getUserLikes()
+            
           }
           else {
             navigate("/")
@@ -105,22 +111,13 @@ function UserThought() {
         return () => unsub()
       }
 
-      useEffect(() => {
-        getUserLikes()
-      })
-
 
       useEffect(() => {
         if (thought) {
-            getAuthorData(thought[0].author_id)
-            const createDate = formatDistanceToNow(thought[0].createdAt.toDate(), { includeSeconds: true, addSuffix: true})
-            setCreationDate(createDate)
-        }
-      })
-
-      useEffect(() => {
-        if (thought) {
+          getAuthorData(thought && thought[0].author_id)
           viewThought(thought[0].title)
+          const createDate = formatDistanceToNow(thought[0].createdAt.toDate(), { includeSeconds: true, addSuffix: true})
+          setCreationDate(createDate)
         }
       }, [thought])
 
@@ -136,10 +133,12 @@ function UserThought() {
         return () => unsub()
       }
 
-      useEffect(() => {
-        getComments()
-      }, [])
-
+      useRunOnce({
+        fn: () => {
+            getComments()
+            getUserLikes()
+        }
+    });
 
 
       const GetUserThoughts = async(list) => {
@@ -239,15 +238,12 @@ function UserThought() {
         const ReplyToComment = async(comment) => {
           setComment(true)
           setType("reply")
-          console.log(comment)
           const commentRef = doc(db, "comments", comment)
           const docSnap =  await getDoc(commentRef)
           await setCommentData(docSnap.data())
-          console.log(commentData)
           const authorRef = doc(db, "users", commentData && commentData.author)
           const docSnap2 = await getDoc(authorRef)
           await setReplyAuthor(docSnap2.data())
-          console.log(replyAuthor)
 
         }
         
@@ -267,7 +263,12 @@ function UserThought() {
                 </div>
             <h1 className="w-full text-right text-lg text-neutral-700 md:text-xl">{creationDate && creationDate}</h1>
                 </div>
-            <h1 className="md:text-xl w-full text-lg">{thought && thought[0].content}</h1>
+            <Markdown className="md:text-xl w-full text-lg" remarkPlugins={[remarkGfm]} components={{
+              a(props) {
+                const {...rest} = props
+                return <a className="text-blue-500 " href={rest.href} target="_blank">{rest.href}</a>
+              }
+            }}>{thought && thought[0].content}</Markdown>
             <hr className="border-neutral-500/30 w-full mt-4"/>
             <div className="w-full flex mt-4">
                 <div className="w-full flex gap-2 items-center">
@@ -290,7 +291,7 @@ function UserThought() {
                               <h1 className='text-2xl text-neutral-600 text-center'>No comments yet.</h1>
                           </div>
             ) : (
-              <ul className="w-full h-[45ù0px] gap-3 flex flex-col overflow-auto [&::-webkit-scrollbar]:w-0">
+              <ul className="w-full h-[400px] gap-3 flex flex-col overflow-auto [&::-webkit-scrollbar]:w-0">
                 { comments.map((comment) => {
                 return (<CommentItem key={comment} commentId={comment} ReplyTo={() => ReplyToComment(comment)} sparkleId={params.id} sparkleAuthor={author && author.id}/>)
                 })}

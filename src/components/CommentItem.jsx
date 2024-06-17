@@ -7,6 +7,9 @@ import { db, app } from '../config'
 import { doc, getDoc, query, where, collection, onSnapshot, increment, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import useRunOnce from './../useRunOnce';
 
 const initialState = {
   postDate: '',
@@ -71,14 +74,13 @@ function CommentItem({commentId, ReplyTo, sparkleId,sparkleAuthor}) {
   }
 
 
-
-useEffect(() => {
-  getCommentData()
-})
-
-useEffect(() => {
-  getLikedState()
-}, [])
+  useRunOnce({
+    fn: () => {
+        console.log("Runs once on mount");
+        getCommentData()
+        getLikedState()
+    }
+});
 
 const MoveToUser = async() => {
   const auth = getAuth(app)
@@ -192,7 +194,13 @@ function OpenComment() {
         <h1 className=' text-neutral-500 w-full text-right'>{state.postDate}</h1>
       </div>
       <div>
-        <h1 className='text-xl my-4 hover:underline cursor-pointer' onClick={OpenComment}>{commentData && commentData.content}</h1>
+        <Markdown className='text-xl my-4 cursor-pointer' remarkPlugins={[remarkGfm]} components={{
+              a(props) {
+                const {node, ...rest} = props
+                console.log("link")
+                return <a className="text-blue-500" href={rest.href} target="_blank">{rest.href}</a>
+              }
+            }}>{commentData && commentData.content}</Markdown>
         <hr className='border-neutral-800'/>
         <div className='flex items-center gap-5 p-2 justify-between mt-1'>
           <div className='w-full flex gap-5 items-center justify-between'>
@@ -202,7 +210,7 @@ function OpenComment() {
           </div>
           <div className='flex gap-2 items-center'>
             <button>                  
-              <MessageSquare className=" cursor-pointer hover:text-green-500 transition-colors duration-200" onClick={ReplyTo}/>
+              <MessageSquare className=" cursor-pointer hover:text-green-500 transition-colors duration-200"  onClick={OpenComment}/>
               </button>
             <h1 className="text-lg md:text-xl">{commentData && formatNumber(commentData.replies.length)}</h1>
           </div>

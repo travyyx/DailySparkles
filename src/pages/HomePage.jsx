@@ -21,6 +21,7 @@ function HomePage() {
     const [error, setError] = useState(false)
     const [ viewType, setViewType ] = useState(0)
     const [followingMode, setFollowingMode] = useState(0)
+    const [following, setFollowing] = useState(null)
     const navigate = useNavigate()
     const auth = getAuth()
 
@@ -57,6 +58,7 @@ function HomePage() {
         const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
         const followingList = docSnap.data().following
+        setFollowing(followingList)
         followingList.map((following) => {
           const thoughtsList = []
           const q = query(collection(db, "users"), where("id", "==", following))
@@ -213,10 +215,17 @@ function HomePage() {
                   )
                   }) : 
                     (
+                      following && following.length != 0 ? (
+                        <div className="w-full h-full flex items-center justify-center flex-col gap-5">
+                        <UserRoundX className="size-36 text-neutral-600 md:size-40"/>
+                        <h1 className="text-3xl text-neutral-600 md:text-4xl">No sparkles from your following.</h1>
+                      </div>
+                      ) : (
                       <div className="w-full h-full flex items-center justify-center flex-col gap-5">
                       <UserRoundX className="size-36 text-neutral-600 md:size-40"/>
                       <h1 className="text-3xl text-neutral-600 md:text-4xl">You are following nobody.</h1>
                     </div>
+                      )
                     )}
             </ul>
            )}
