@@ -252,7 +252,7 @@ function UserThought() {
         <main className="bg-black flex flex-col h-screen w-screen text-white gap-2 items-center justify-center">
             { !loading ? (<><header className="w-full flex items-center justify-between mt-5">
                 <UserCircleIcon className=' ml-4 cursor-pointer hover:stroke-blue-500 transition-colors duration-200 md:size-9 size-7' onClick={MoveToProfile}/>
-                { thought && (<h1 className="font-semibold max-sm:text-2xl md:text-3xl text-center max-sm:truncate w-72 md:w-auto text-2xl">{thought && thought[0].title}</h1>)}
+                { thought && (<h1 className="max-sm:text-2xl md:text-3xl text-center max-sm:truncate w-72 md:w-auto text-2xl">{thought && thought[0].title}</h1>)}
                 <Home className=' mr-4 cursor-pointer hover:stroke-blue-500 transition-colors duration-200 md:size-8' onClick={MoveToHome}/>
             </header>
             <div className="w-full h-full md:w-3/4 p-2 items-center flex flex-col mt-4">
@@ -291,7 +291,7 @@ function UserThought() {
                               <h1 className='text-2xl text-neutral-600 text-center'>No comments yet.</h1>
                           </div>
             ) : (
-              <ul className="w-full h-[400px] gap-3 flex flex-col overflow-auto [&::-webkit-scrollbar]:w-0">
+              <ul className="w-full h-[350px] gap-3 flex flex-col overflow-auto [&::-webkit-scrollbar]:w-0">
                 { comments.map((comment) => {
                 return (<CommentItem key={comment} commentId={comment} ReplyTo={() => ReplyToComment(comment)} sparkleId={params.id} sparkleAuthor={author && author.id} sparkleName={thought && thought[0].title}/>)
                 })}
@@ -310,7 +310,7 @@ function UserThought() {
             </>
             )}      
             { alertType === "copied" && <AlertItem content={"Link copied."} type={"success"}/>}
-            { comment && type === "comment" && (<CommentModal onClose={() => setComment(false)} type={"comment"} SparkleName={thought[0].title} authorName={author.name}/>)}
+            { comment && type === "comment" && (<CommentModal onClose={() => setComment(false)} type={"comment"} SparkleName={thought &&thought[0].title} authorName={author.name}/>)}
             { comment && type === "reply" && (<CommentModal onClose={() => setComment(false)} type={"reply"} commentId={commentData && commentData.id} authorName={replyAuthor && replyAuthor.name}/>)}
         </main>
     )

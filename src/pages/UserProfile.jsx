@@ -101,7 +101,7 @@ setError(true)
 
 
     const MoveToThoughts = async() => {
-      navigate(`/${userData[0].id}/sparkles`)
+      navigate(`/user/${userData[0].id}/sparkles`)
   }
 
   const FollowUser = async() => {

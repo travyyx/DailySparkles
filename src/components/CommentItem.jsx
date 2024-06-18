@@ -76,7 +76,6 @@ function CommentItem({commentId, ReplyTo, sparkleId,sparkleAuthor, sparkleName})
 
   useRunOnce({
     fn: () => {
-        console.log("Runs once on mount");
         getCommentData()
         getLikedState()
     }
@@ -241,7 +240,7 @@ const deleteReply = async() => {
             <Trash className="hover:text-red-500 transition-colors duration-200 cursor-pointer" onClick={deleteReply}/>
           )}
           </div>
-          { user && authorData && user.uid === authorData.id && sparkleAuthor === user.uid && !commentData.isReply && (
+          { user && authorData && sparkleAuthor === user.uid && !commentData.isReply && (
             commentData && commentData.isPinned ? (
               <button><PinOff className="hover:text-red-500 transition-colors duration-200 cursor-pointer" onClick={SetCommentPinState}/></button>
              ) : (<button><Pin className="hover:text-blue-500 transition-colors duration-200 cursor-pointer" onClick={SetCommentPinState}/></button>)

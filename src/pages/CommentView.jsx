@@ -42,24 +42,28 @@ export function CommentView() {
       }, [auth, navigate]);
 
       const getUserLikes = async() => {
+        try {
 
-        const auth = getAuth(app)
-        const userdata = auth.currentUser
-  
-        const q = query(collection(db, "users"), where("id", "==",userdata && userdata.uid))
-  
-        const unsub = await onSnapshot(q, (querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            if (doc.data().liked.includes(params.id)) {
-                setIsLiked(true)
-            }
-            else {
-                setIsLiked(false)
-            }
+          const auth = getAuth(app)
+          const userdata = auth.currentUser
+    
+          const q = query(collection(db, "users"), where("id", "==",userdata && userdata.uid))
+    
+          const unsub = await onSnapshot(q, (querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              if (doc.data().liked.includes(params.id)) {
+                  setIsLiked(true)
+              }
+              else {
+                  setIsLiked(false)
+              }
+            })
           })
-        })
-        
-        return () => unsub()
+          
+          return () => unsub()
+        } catch {
+          setError(true)
+        }
 
     }
 
@@ -169,8 +173,10 @@ export function CommentView() {
           snapshot.forEach((doc) => {
             setCommentData(doc.data())
             setReplies(doc.data().replies)
+            setLoading(false)
           })
         })
+
         
 
         return () => unsub()
@@ -269,7 +275,7 @@ export function CommentView() {
         <main className="bg-black flex flex-col h-screen w-screen text-white gap-2 items-center justify-center p-4">
             { !loading ? (<><header className="w-full flex items-center justify-between md:w-[700px] mt-2">
                 <ArrowLeft className="md:size-7 hover:text-blue-500 transition-all duration-200 cursor-pointer" onClick={MoveToSparkle}/>
-                <h1 className="text-xl md:text-2xl font-bold">Comment</h1>
+                <h1 className="text-xl md:text-2xl">Comment</h1>
                 <Home className="md:size-7 hover:text-blue-500 transition-all duration-200 cursor-pointer" onClick={MoveToHome}/>
             </header>
             <hr className="border-neutral-800 w-full md:w-[700px]"/>
