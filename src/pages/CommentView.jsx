@@ -96,7 +96,7 @@ export function CommentView() {
           const createDate = formatDistanceToNow(commentData.creationDate.toDate(), { includeSeconds: true, addSuffix: true})
           setCreationDate(createDate)
       }
-    }, [commentData])
+    }, [])
 
     const MoveToSparkle = async() => {
         navigate(`/sparkle/${params.sparkleId}`)
