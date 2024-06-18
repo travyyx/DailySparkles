@@ -64,7 +64,8 @@ alert("An error occured: " + error.message)
           comments: [],
           thoughts: [],
           dailyThoughts: 3,
-          lastPostingDate: null
+          lastPostingDate: null,
+          new: true
   
         })
       }

@@ -218,7 +218,7 @@ const deleteReply = async() => {
         <h1 className=' text-neutral-500 w-full text-right'>{state.postDate}</h1>
       </div>
       <div>
-        <Markdown className='text-xl my-4 cursor-pointer' remarkPlugins={[remarkGfm]} components={{
+        <Markdown className='text-lg my-4 cursor-pointer' remarkPlugins={[remarkGfm]} components={{
               a(props) {
                 const {node, ...rest} = props
                 console.log("link")

@@ -71,6 +71,68 @@ setError(true)
 
         }
 
+        const DeleteComment = async(comment, liked, thoughtName) => {
+          const deleteConfirm = true
+          if (deleteConfirm) {
+            if (liked) {
+              const thoughtRef = doc(db, "comments", comment);
+      
+              // Set the "capital" field of the city 'DC'
+              await updateDoc(thoughtRef, {
+                  likes: increment(-1)
+              });
+              const auth = getAuth(app)
+              const userdata = auth.currentUser
+              const userRef = doc(db, "users", userdata.uid);
+              
+              // Atomically add a new region to the "regions" array field.
+              await updateDoc(userRef, {
+                  liked: arrayRemove(comment.id)
+              });
+    
+              const commentRef = doc(db, "comments", comment);
+              const docSnap = await getDoc(commentRef)
+      
+              if (docSnap.data() && !docSnap.data().replies) {
+                return
+              } else {
+                docSnap.data().replies.forEach((reply) => {
+                  const replyRef = doc(db, "comments", reply);
+                  deleteDoc(replyRef)
+                })
+              }
+              const sparkleRef = doc(db, "thoughts", thoughtName)
+              await updateDoc(sparkleRef, {
+                comments: arrayRemove(comment)
+                })
+              await deleteDoc(commentRef)
+    
+            } else {
+              const commentRef = doc(db, "comments", comment);
+              const docSnap = await getDoc(commentRef)
+      
+              if (docSnap.data() && !docSnap.data().replies) {
+                return
+              } else {
+                docSnap.data().replies.forEach((reply) => {
+                  const replyRef = doc(db, "comments", reply);
+                  deleteDoc(replyRef)
+                })
+              }
+              const sparkleRef = doc(db, "thoughts", thoughtName)
+              await updateDoc(sparkleRef, {
+                comments: arrayRemove(comment)
+                })
+              await deleteDoc(commentRef)
+            }
+          
+          } else {
+            return
+          }
+    
+    
+      }
+
       const AddThought = async(title, content, topic) => {
         const uniqueId = () => {
           const dateString = Date.now().toString(36);
@@ -164,19 +226,33 @@ setError(true)
       const deleteAlert = confirm("Are you sure to delete the sparkle?")
 
       if (deleteAlert) {
-
-        const auth = getAuth(app)
-        const user = auth.currentUser
-        const userRef = doc(db, "users", user.uid);
-        await updateDoc(userRef, {
-          thoughts: arrayRemove(thought.id)
-        });
         const thoughtRef = doc(db, "thoughts", thought.title)
-      await deleteDoc(thoughtRef)
-      setAlertType("deleted")
-      delay(5000).then(() => setAlertType(""))
-      } else {
-        return
+        const docSnap = await getDoc(thoughtRef)
+        const userRef = doc(db, "users", user && user.uid)
+        const snap = await getDoc(userRef)
+        
+        if (snap.data().liked.includes(docSnap.data().id)) {
+          if (docSnap.data().comments) {
+            docSnap.data().comments.forEach((comment) => {
+             DeleteComment(comment, true, thought.title)
+            })
+          }
+          await deleteDoc(thoughtRef)
+
+          setAlertType("success")
+          delay(5000).then(() => setAlertType(""))
+
+        }
+          if (docSnap.data().comments) {
+            docSnap.data().comments.forEach((comment) => {
+              DeleteComment(comment, false, thought.title)
+            })
+          }
+          await deleteDoc(thoughtRef)
+
+          setAlertType("success")
+          delay(5000).then(() => setAlertType(""))
+
       }
   }
 
@@ -221,7 +297,6 @@ setError(true)
           if (docSnap.data().dailyThoughts === 3) {
             setDailyThoughts(docSnap.data().dailyThoughts)
           } else {
-            console.log(formatDistanceToNowStrict(docSnap.data().lastPostingDate.toDate()))
             if (formatDistanceToNowStrict(docSnap.data().lastPostingDate.toDate()).includes("day") || formatDistanceToNowStrict(docSnap.data().lastPostingDate.toDate()).includes("days")) {
               await updateDoc(docRef, {
                 dailyThoughts: 3

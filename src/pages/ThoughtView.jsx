@@ -79,7 +79,7 @@ function UserThought() {
           const auth = getAuth(app)
           const userdata = auth.currentUser
     
-          const q = query(collection(db, "users"), where("id", "==", userdata.uid))
+          const q = query(collection(db, "users"), where("id", "==", userdata && userdata.uid))
     
           const unsub = await onSnapshot(q, (querySnapshot) => {
             querySnapshot.forEach((doc) => {
@@ -115,7 +115,7 @@ function UserThought() {
       useEffect(() => {
         if (thought) {
           getAuthorData(thought && thought[0].author_id)
-          viewThought(thought[0].title)
+          viewThought(thought && thought[0].title)
           const createDate = formatDistanceToNow(thought[0].createdAt.toDate(), { includeSeconds: true, addSuffix: true})
           setCreationDate(createDate)
         }
@@ -172,7 +172,7 @@ function UserThought() {
 
         const LikeThought = async() => {
             if (!liked) {
-                const thoughtRef = doc(db, "thoughts", thought[0].title);
+                const thoughtRef = doc(db, "thoughts", thought && thought[0].title);
 
 // Set the "capital" field of the city 'DC'
                 await updateDoc(thoughtRef, {

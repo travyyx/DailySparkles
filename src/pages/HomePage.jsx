@@ -207,7 +207,7 @@ function HomePage() {
            </ul>
            )}
            { viewType === 1 && (
-            <ul className="w-screen h-full p-4 flex flex-col gap-2 overflow-auto md:w-[800px] [&::-webkit-scrollbar]:w-0">
+            <ul className="w-screen h-full p-4 flex flex-col gap-2 overflow-auto md:w-[650px] [&::-webkit-scrollbar]:w-0">
               {followingThoughts.length != 0 ? followingThoughts.map((thought) => {
                 return (
                   <HomeThoughtItem key={thought.id} content={thought.content} title={thought.title}
@@ -231,7 +231,7 @@ function HomePage() {
            )}
 
 { viewType === 2 && (
-            <ul className="w-screen h-full p-4 flex flex-col gap-2 overflow-auto md:w-[800px] [&::-webkit-scrollbar]:w-0">
+            <ul className="w-screen h-full p-4 flex flex-col gap-2 overflow-auto md:w-[650px] [&::-webkit-scrollbar]:w-0">
               {topics.length != 0 ? topics.map((topic) => {
                 return (
                   <TopicsItem key={topic.name} name={topic.name} description={topic.description} icon={topic.icon}/>
@@ -247,7 +247,7 @@ function HomePage() {
            )}
 
 { viewType === 3 && (
-            <ul className="w-screen h-full p-4 flex flex-col gap-2 overflow-auto md:w-[800px] [&::-webkit-scrollbar]:w-0">
+            <ul className="w-screen h-full p-4 flex flex-col gap-2 overflow-auto md:w-[650px] [&::-webkit-scrollbar]:w-0">
               {trending.length != 0 ? trending.map((thought) => {
                 return (
                   <HomeThoughtItem key={thought.id} content={thought.content} title={thought.title}

@@ -267,13 +267,13 @@ export function CommentView() {
 
     return (
         <main className="bg-black flex flex-col h-screen w-screen text-white gap-2 items-center justify-center p-4">
-            <header className="w-full flex items-center justify-between md:w-[500px] mt-2">
-                <ArrowLeft className="md:size-9 size-7 hover:text-blue-500 transition-all duration-200 cursor-pointer" onClick={MoveToSparkle}/>
+            <header className="w-full flex items-center justify-between md:w-[700px] mt-2">
+                <ArrowLeft className="md:size-7 hover:text-blue-500 transition-all duration-200 cursor-pointer" onClick={MoveToSparkle}/>
                 <h1 className="text-xl md:text-2xl font-bold">Comment</h1>
-                <Home className="md:size-9 size-7 hover:text-blue-500 transition-all duration-200 cursor-pointer" onClick={MoveToHome}/>
+                <Home className="md:size-7 hover:text-blue-500 transition-all duration-200 cursor-pointer" onClick={MoveToHome}/>
             </header>
-            <hr className="border-neutral-800 w-full md:w-[500px]"/>
-            <div className="w-full flex items-center justify-between md:w-[500px]">
+            <hr className="border-neutral-800 w-full md:w-[700px]"/>
+            <div className="w-full flex items-center justify-between md:w-[700px]">
                 <div className="w-full flex items-center gap-2">
                     <img src={author && author.photoURL} alt="Profile picture" width={48} height={48} className="rounded-full"/>
                     <h1 className="text-lg md:text-xl cursor-pointer hover:underline" onClick={MoveToUser}>{author && author.name}</h1>
@@ -281,8 +281,8 @@ export function CommentView() {
                 </div>
                 <h1 className="text-lg md:text-xl text-neutral-500 w-full text-right">{creationDate && creationDate}</h1>
             </div>
-            <div className="w-full mt-2 md:w-[500px]">
-                <Markdown className="w-96 text-lg md:text-xl" remarkPlugins={[remarkGfm]} components={{
+            <div className="w-full mt-2 md:w-[700px]">
+                <Markdown className="w-full text-lg md:text-xl" remarkPlugins={[remarkGfm]} components={{
               a(props) {
                 const {node, ...rest} = props
                 return <a className="text-blue-500 " href={rest.href} target="_blank">{rest.href}</a>
@@ -306,13 +306,13 @@ export function CommentView() {
                         <Pin className="md:size-7 hover:text-blue-600 duration-200 transition-all cursor-pointer" onClick={SetCommentPinState}/>
                       )
                     )}
-                    <Trash2 className="md:size-9 size-7 ml-2 hover:text-red-600 transition-all duration-200 cursor-pointer" onClick={DeleteComment}/>
+                    <Trash2 className="md:size-7 ml-2 hover:text-red-600 transition-all duration-200 cursor-pointer" onClick={DeleteComment}/>
                     </div>
                 </div>
             </div>
-            <hr className="border-neutral-800 w-full md:w-[500px]"/>
-            <div className="w-full h-full md:w-[500px]">
-                <h1 className="w-full text-2xl text-center md:text-3xl mb-2">Replies</h1>
+            <hr className="border-neutral-800 w-full md:w-[700px]"/>
+            <div className="w-full h-full md:w-[700px]">
+                <h1 className="w-full text-xl text-center md:text-2xl mb-4">Replies</h1>
                 { replies && replies.length != 0 ? (
                     <ul className="w-full h-[430px] gap-3 flex flex-col overflow-auto [&::-webkit-scrollbar]:w-0">
                   { replies.map((reply) => {
@@ -320,7 +320,7 @@ export function CommentView() {
                 })}
                     </ul>
                 ) : (
-                    <div className="w-full flex border h-[470px] rounded-lg border-neutral-800 items-center justify-center">
+                    <div className="w-full flex border h-[450px] rounded-lg border-neutral-800 items-center justify-center">
                         <h1 className="text-2xl md:text-3xl text-neutral-500">No replies yet.</h1>
                     </div>
                 )}
