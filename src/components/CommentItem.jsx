@@ -212,7 +212,7 @@ const deleteReply = async() => {
         <div className='flex gap-2 w-full items-center'>
         <img src={authorData && authorData.photoURL} alt="author picture" className='w-[42px] rounded-full h-[42px]'/>
         <h1 className='text-xl cursor-pointer hover:underline' tabIndex={0} onClick={MoveToUser}>{authorData && authorData.name}</h1>
-        { user && authorData && user.uid == authorData.id && commentData && commentData.isPinned &&(<Pin className=" text-blue-500 fill-blue-500" size={24} fill="currentFill"/>)}
+        { user && authorData && commentData && commentData.isPinned &&(<Pin className=" text-blue-500 fill-blue-500" size={24} fill="currentFill"/>)}
         </div>
         <h1 className=' text-neutral-500 w-full text-right'>{state.postDate}</h1>
       </div>
@@ -220,7 +220,6 @@ const deleteReply = async() => {
         <Markdown className='text-lg my-4 cursor-pointer' remarkPlugins={[remarkGfm]} components={{
               a(props) {
                 const {node, ...rest} = props
-                console.log("link")
                 return <a className="text-blue-500" href={rest.href} target="_blank">{rest.href}</a>
               }
             }}>{commentData && commentData.content}</Markdown>

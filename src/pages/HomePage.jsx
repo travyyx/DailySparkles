@@ -152,7 +152,7 @@ function HomePage() {
               setTopics(TopicsList)
               })
               } catch(error) {
-                console.log(error)
+
                 setError(true)
                 }
                 
@@ -163,9 +163,7 @@ function HomePage() {
         const auth = getAuth(app)
         const userdata = auth.currentUser
         const userRef = doc(db, "users", userdata && userdata.uid)
-        console.log(userRef)
         const docSnap = await getDoc(userRef)
-        console.log(docSnap.data())
 
         if (docSnap.data().newUser) {
           setEdit(true)

@@ -117,7 +117,6 @@ function SearchPage() {
       }
 
       useEffect(() => {
-        console.log(textContent)
         setTextContent(watch("search"))
       })
 
