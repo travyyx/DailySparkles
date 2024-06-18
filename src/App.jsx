@@ -34,7 +34,6 @@ function App() {
       await signInWithPopup(auth, provider)
       CreateUser()
       navigate("/home")
-      window.localStorage.setItem("new", "false")
     } catch (error) {
 alert("An error occured: " + error.message)
     }
@@ -65,7 +64,7 @@ alert("An error occured: " + error.message)
           thoughts: [],
           dailyThoughts: 3,
           lastPostingDate: null,
-          new: true
+          newUser: true
   
         })
       }

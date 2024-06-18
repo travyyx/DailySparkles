@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getAuth } from 'firebase/auth'
 import  { app, db } from '../config'
-import { query, collection, orderBy, getDocs, doc, getDoc, where } from 'firebase/firestore'
+import { query, collection, orderBy, getDocs, doc, getDoc, where, updateDoc } from 'firebase/firestore'
 import TopicsItem from "../components/TopicsItem"
 import useRunOnce from './../useRunOnce';
 
@@ -159,17 +159,24 @@ function HomePage() {
                 setLoading(false)
       }
 
-      useRunOnce({
-        fn: () => {
-          const newUser = window.localStorage.getItem("new")
-            if (newUser === "false") {
-              setEdit(true)
-              window.localStorage.setItem("new", "true")
-            } else {
-              setEdit(false)
-            }
+      const checkNew = async() => {
+        const auth = getAuth(app)
+        const userdata = auth.currentUser
+        const userRef = doc(db, "users", userdata && userdata.uid)
+        console.log(userRef)
+        const docSnap = await getDoc(userRef)
+        console.log(docSnap.data())
+
+        if (docSnap.data().newUser) {
+          setEdit(true)
+        } else {
+          setEdit(false)
         }
-    });
+      }
+
+      useEffect(() => {
+        checkNew()
+      }, [user])
 
 
     return (
@@ -275,10 +282,8 @@ function HomePage() {
           </div>
           </>
            )}
-          { edit && <EditModal onClose={() => {
-            setEdit(false)
-            window.localStorage.setItem("new", "false")
-          }}/>}
+          { edit && <EditModal onClose={() =>
+            setEdit(false)}/>}
         </main>
     )
 }

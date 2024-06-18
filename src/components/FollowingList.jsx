@@ -60,7 +60,7 @@ function FollowingList({onClose}) {
 
     return (
         <div className="fixed inset-0 bg-black backdrop-blur-sm bg-opacity-30 flex flex-col items-center justify-center p-4 sm:p-0 text-white">
-        <div className="border-neutral-900 bg-neutral-950 border-2 m-4 p-4 rounded w-full md:w-[500px]">
+        <div className="border-neutral-900 bg-neutral-950 border-2 m-4 p-4 rounded w-[400px]">
             <div className='flex w-full items-center justify-between'>
                 <h1 className='text-2xl'>Following.</h1>
                 <X className='cursor-pointer' onClick={onClose}/>

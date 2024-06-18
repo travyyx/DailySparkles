@@ -191,7 +191,7 @@ function UserThought() {
             }
 
             else {
-                const thoughtRef = doc(db, "thoughts", thought[0].title);
+                const thoughtRef = doc(db, "thoughts", thought && thought[0].title);
 
                 // Set the "capital" field of the city 'DC'
                 await updateDoc(thoughtRef, {
