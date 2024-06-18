@@ -255,7 +255,7 @@ function UserThought() {
                 { thought && (<h1 className="font-semibold max-sm:text-2xl md:text-3xl text-center max-sm:truncate w-72 md:w-auto text-2xl">{thought && thought[0].title}</h1>)}
                 <Home className=' mr-4 cursor-pointer hover:stroke-blue-500 transition-colors duration-200 md:size-8' onClick={MoveToHome}/>
             </header>
-            <div className="w-full h-full md:w-2/4 p-2 items-center flex flex-col mt-4">
+            <div className="w-full h-full md:w-3/4 p-2 items-center flex flex-col mt-4">
                 <div className="w-full flex items-center mb-4">
                 <div className="flex w-full items-center gap-2">
                     <img src={author && author.photoURL} alt="" className="w-12 h-12 rounded-full"/>
