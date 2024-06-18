@@ -146,7 +146,7 @@ function HomeThoughtItem({thought, content, title, author}) {
         navigate("/profile")
     }
     else {
-        navigate(`/${author}`)
+        navigate(`/user/${author}`)
     }
 
     

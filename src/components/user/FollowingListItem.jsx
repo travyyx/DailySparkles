@@ -85,7 +85,7 @@ function FollowingListItem({id}) {
               navigate("/profile")
           }
           else {
-              navigate(`/${id}`)
+              navigate(`/user/${id}`)
           }
         }
 

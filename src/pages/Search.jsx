@@ -79,7 +79,7 @@ function SearchPage() {
       const openUserPage = async(user) => {
         const auth = getAuth(app)
         const userdata = auth.currentUser
-      navigate(`/${user.id}`)
+      navigate(`/user/${user.id}`)
       const recentsRef = doc(db, "users", userdata.uid);
       await updateDoc(recentsRef, {
         recentSearch: arrayUnion(user.name)
@@ -123,7 +123,7 @@ function SearchPage() {
 
     return (
     <main className="bg-black flex flex-col h-screen w-screen text-white gap-1 items-center justify-center">
-      { !loading ? (<><header className="w-full flex items-center p-4 md:w-[900px]">
+      { !loading ? (<><header className="w-full flex items-center p-4 md:w-[700px]">
       <ArrowLeft size={32} className='cursor-pointer hover:stroke-blue-500 transition-colors duration-200'  onClick={() => navigate("/home")}/>
         <form className="flex flex-col gap-2 w-full ml-2" onChange={handleSubmit(SearchUser)}>
             <div className="flex items-center justify-center gap-4 w-full">
@@ -133,7 +133,7 @@ function SearchPage() {
         </form>
       </header>
         { recentSearch && recentSearch.length != 0 && textContent === "" ? (
-      <div className="w-full flex flex-col p-2 md:w-[900px]">
+      <div className="w-full flex flex-col p-2 md:w-[700px]">
         <div className="flex items-center justify-between mb-2">
         <h1 className="text-xl">Recent Searchs.</h1>
         <h1 className="text-xl text-blue-500 hover:text-blue-700 transition-colors duration-200 cursor-pointer" onClick={clearAllRecents}>Clear All</h1>
@@ -150,7 +150,7 @@ function SearchPage() {
         {FindedUsers && FindedUsers.length != 0  && <h1 className="text-2xl mt-2 mb-2">Results: {FindedUsers ? FindedUsers.length : "0"}</h1>}
         { FindedUsers.length === 0 ? (<h1 className="text-3xl mt-5">No results.</h1>) :  
          textContent != "" && (
-        <ul className="w-full md:w-[900px] h-[620px] overflow-auto p-2 [&::-webkit-scrollbar]:w-0">
+        <ul className="w-full md:w-[700px] h-[620px] overflow-auto p-2 [&::-webkit-scrollbar]:w-0">
             {FindedUsers && (
               FindedUsers.map((user) => {
                 return (

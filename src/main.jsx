@@ -34,11 +34,11 @@ const router = createBrowserRouter([
     element: <ThoughtsPage/>
   },
   {
-    path: '/:id',
+    path: '/user/:id',
     element: <UserThoughts/>
   },
   {
-    path: '/:id/sparkles',
+    path: 'user/:id/sparkles',
     element: <UserThoughtsPage/>
   },
   {
