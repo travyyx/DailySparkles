@@ -83,7 +83,7 @@ function TopicPage() {
             }) : (
               <div className="w-full h-full flex items-center justify-center flex-col gap-5">
                 <Telescope className="size-36 text-neutral-600 md:size-40"/>
-                <h1 className="text-3xl text-neutral-600 md:text-4xl text-center">No sparkles related to "{params.name}".</h1>
+                <h1 className="text-3xl text-neutral-600 md:text-4xl text-center">No sparkles related to &quot;{params.name}&quot;.</h1>
               </div>
             )}
             </ul>

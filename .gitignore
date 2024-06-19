@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+resources/android/**/*
+android
+capacitor.config.ts
+ionic.config.json
+resources

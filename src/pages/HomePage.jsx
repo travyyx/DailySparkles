@@ -167,6 +167,9 @@ function HomePage() {
 
         if (docSnap.data().newUser) {
           setEdit(true)
+          await updateDoc(userRef, {
+            newUser: false
+          })
         } else {
           setEdit(false)
         }

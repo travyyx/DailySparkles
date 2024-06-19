@@ -9,6 +9,7 @@ function TopicsItem({name, icon, description}) {
     function MoveToTopic() {
         navigate(`/topic/${name}`)
     }
+    
     return (
         <div className="w-full border-neutral-900 border-2 flex justify-between items-center gap-3 p-2 md:rounded-md cursor-pointer md:mt-4 mt-2 hover:bg-neutral-950 transition-colors duration-200 px-4 rounded flex-col">
                 <div className="flex gap-2 items-center w-full">
